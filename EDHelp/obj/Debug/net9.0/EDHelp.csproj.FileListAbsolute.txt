@@ -72,3 +72,6 @@ C:\Dev\Personal\Software\EDHelp\EDHelp\obj\Debug\net9.0\refint\EDHelp.dll
 C:\Dev\Personal\Software\EDHelp\EDHelp\obj\Debug\net9.0\EDHelp.pdb
 C:\Dev\Personal\Software\EDHelp\EDHelp\obj\Debug\net9.0\EDHelp.genruntimeconfig.cache
 C:\Dev\Personal\Software\EDHelp\EDHelp\obj\Debug\net9.0\ref\EDHelp.dll
+C:\Dev\Personal\Software\EDHelp\EDHelp\obj\Debug\net9.0\EDHelp.sourcelink.json
+C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.dll
+C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll

@@ -1,20 +1,63 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:EDHelp.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:views="using:EDHelp.Views"
         x:Class="EDHelp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="EDHelp">
+        Title="EDH Deck Builder"
+        Width="1080" Height="720"
+        WindowStartupLocation="CenterScreen"
+        DragDrop.AllowDrop="True">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid>
+        <Border x:Name="ImportView"
+                IsVisible="{Binding ShowImportView}"
+                Background="#1e1e1e"
+                BorderBrush="#404040"
+                BorderThickness="2"
+                CornerRadius="8"
+                Margin="50">
+            
+            <Border.Styles>
+                <Style Selector="Border.dragover">
+                    <Setter Property="BorderBrush" Value="#0078d4"/>
+                    <Setter Property="Background" Value="#0078d420"/>
+                </Style>
+            </Border.Styles>
+            
+            <StackPanel HorizontalAlignment="Center" 
+                       VerticalAlignment="Center"
+                       Spacing="20">
+                
+                <TextBlock Text="📋" FontSize="72" HorizontalAlignment="Center"/>
+                
+                <TextBlock Text="{Binding DragText}"
+                          FontSize="18"
+                          Foreground="#cccccc"
+                          HorizontalAlignment="Center"
+                          TextWrapping="Wrap"
+                          MaxWidth="400"/>
+                
+                <Button Content="Or Browse for File"
+                       HorizontalAlignment="Center"
+                       Padding="20,10"
+                       Click="BrowseFile_Click"/>
+                
+            </StackPanel>
+        </Border>
 
+        <!-- Deck Builder View -->
+        <ContentControl IsVisible="{Binding !ShowImportView}"
+                       Content="{Binding CurrentDeckBuilder}">
+            <ContentControl.ContentTemplate>
+                <DataTemplate DataType="vm:DeckBuilderViewModel">
+                    <views:DeckBuilderView/>
+                </DataTemplate>
+            </ContentControl.ContentTemplate>
+        </ContentControl>
+    </Grid>
 </Window>

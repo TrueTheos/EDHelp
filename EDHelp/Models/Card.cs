@@ -1,14 +1,19 @@
-﻿namespace EDHelp.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace EDHelp.Models;
 
 public class Card
 {
-    public int id { get; set; }
-    public string name { get; set; } = string.Empty;
-    public string manaCost { get; set; } = string.Empty;
-    public int convertedManaCost { get; set; }
-    public string type { get; set; } = string.Empty;
-    public string colors { get; set; } = string.Empty;
-    public string text { get; set; } = string.Empty;
-    public string imageUrl { get; set; } = string.Empty;
-    public bool isCommander { get; set; }
+    public string name { get; set; } = "";
+    public string manaCost { get; set; } = "";
+    public string type { get; set; } = "";
+    public string text { get; set; } = "";
+    public string? power { get; set; }
+    public string? toughness { get; set; }
+    public byte[]? imageData { get; set; }
+    public List<string> colors { get; set; } = new();
+    public string rarity { get; set; } = "";
+    public string setCode { get; set; } = "";
+    public DateTime cachedAt { get; set; }
 }

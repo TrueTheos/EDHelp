@@ -12,7 +12,7 @@ public class Deck
     public List<DeckCard> cards { get; set; } = new();
     public DateTime created { get; set; } = DateTime.Now;
         
-    public int totalCards => cards.Sum(c => c.quantity);
+    public int totalCards { get; set; }
 }
     
 public class DeckCard

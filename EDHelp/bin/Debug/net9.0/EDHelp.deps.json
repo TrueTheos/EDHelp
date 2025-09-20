@@ -13,7 +13,8 @@
           "Avalonia.Diagnostics": "11.3.4",
           "Avalonia.Fonts.Inter": "11.3.4",
           "Avalonia.Themes.Fluent": "11.3.4",
-          "CommunityToolkit.Mvvm": "8.2.1"
+          "CommunityToolkit.Mvvm": "8.2.1",
+          "Microsoft.Extensions.DependencyInjection": "10.0.0-rc.1.25451.107"
         },
         "runtime": {
           "EDHelp.dll": {}
@@ -365,6 +366,25 @@
           }
         }
       },
+      "Microsoft.Extensions.DependencyInjection/10.0.0-rc.1.25451.107": {
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.0-rc.1.25451.107"
+        },
+        "runtime": {
+          "lib/net9.0/Microsoft.Extensions.DependencyInjection.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.25.45207"
+          }
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.0-rc.1.25451.107": {
+        "runtime": {
+          "lib/net9.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.25.45207"
+          }
+        }
+      },
       "SkiaSharp/2.88.9": {
         "dependencies": {
           "SkiaSharp.NativeAssets.Win32": "2.88.9",
@@ -606,6 +626,20 @@
       "sha512": "sha512-MEnrZ3UIiH40hjzMDsxrTyi8dtqB5ziv3iBeeU4bXsL/7NLSal9F1lZKpK+tfBRnUoDSdtcW3KufE4yhATOMCA==",
       "path": "microcom.runtime/0.11.0",
       "hashPath": "microcom.runtime.0.11.0.nupkg.sha512"
+    },
+    "Microsoft.Extensions.DependencyInjection/10.0.0-rc.1.25451.107": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-LyE1mwZNT30J/6ygkZZm6QlDRaKpwQf5dHkREGAlJQr75kz1VGx0RI/cxa6kevnuYaLNE5UtgtGT2Amp+dFT1Q==",
+      "path": "microsoft.extensions.dependencyinjection/10.0.0-rc.1.25451.107",
+      "hashPath": "microsoft.extensions.dependencyinjection.10.0.0-rc.1.25451.107.nupkg.sha512"
+    },
+    "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.0-rc.1.25451.107": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Wm2HfC0GlWExQmJajq85FHM9iHEOm61Z1c2YLivbzI6R5eT+TTSyfk3RHUra4oBU+oj1XhOIQ5hLW6Kg2r85tg==",
+      "path": "microsoft.extensions.dependencyinjection.abstractions/10.0.0-rc.1.25451.107",
+      "hashPath": "microsoft.extensions.dependencyinjection.abstractions.10.0.0-rc.1.25451.107.nupkg.sha512"
     },
     "SkiaSharp/2.88.9": {
       "type": "package",

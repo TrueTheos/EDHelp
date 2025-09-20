@@ -1,0 +1,38 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:EDHelp.ViewModels"
+             x:Class="EDHelp.Controls.ManaCostControl">
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="WhiteMana" Color="#FFFBD5"/>
+        <SolidColorBrush x:Key="BlueMana" Color="#0E68AB"/>
+        <SolidColorBrush x:Key="BlackMana" Color="#150B00"/>
+        <SolidColorBrush x:Key="RedMana" Color="#D3202A"/>
+        <SolidColorBrush x:Key="GreenMana" Color="#00733E"/>
+        <SolidColorBrush x:Key="ColorlessMana" Color="#CAC5C0"/>
+    </UserControl.Resources>
+
+    <ItemsControl Name="ManaSymbolsPanel" Background="Transparent">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" Spacing="2"/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="vm:ManaSymbolViewModel">
+                <Border Width="18" Height="18" 
+                        CornerRadius="9" 
+                        Background="{Binding Background}"
+                        BorderBrush="#333" 
+                        BorderThickness="1">
+                    <TextBlock Text="{Binding Symbol}" 
+                               FontSize="10" 
+                               FontWeight="Bold"
+                               Foreground="{Binding Foreground}"
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"/>
+                </Border>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

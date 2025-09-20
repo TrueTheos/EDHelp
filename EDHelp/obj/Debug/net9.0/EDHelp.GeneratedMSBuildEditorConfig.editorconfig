@@ -24,5 +24,14 @@ build_property.EnableCodeStyleSeverity =
 [C:/Dev/Personal/Software/EDHelp/EDHelp/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[C:/Dev/Personal/Software/EDHelp/EDHelp/Controls/ManaCostControl.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Dev/Personal/Software/EDHelp/EDHelp/Controls/ManaCurveChart.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Dev/Personal/Software/EDHelp/EDHelp/Views/DeckBuilderView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [C:/Dev/Personal/Software/EDHelp/EDHelp/Views/MainWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

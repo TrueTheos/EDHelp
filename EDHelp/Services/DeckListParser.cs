@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using EDHelp.Models;
 
@@ -14,7 +15,7 @@ public class DecklistParser
             var lines = await File.ReadAllLinesAsync(filePath);
             var deck = new Deck
             {
-                Name = Path.GetFileNameWithoutExtension(filePath)
+                name = Path.GetFileNameWithoutExtension(filePath)
             };
 
             bool inCommanderSection = false;
@@ -49,7 +50,7 @@ public class DecklistParser
                     {
                         var cardName = commanderMatch.Groups[1].Value.Trim();
                         // TODO: Fetch card from database/API
-                        deck.commander = new Card { name = cardName, isCommander = true };
+                        deck.commander = new Card { name = cardName };
                     }
                 }
                 // Parse main deck cards

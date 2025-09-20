@@ -1,14 +1,28 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="EDHelp.App"
-             xmlns:local="using:EDHelp"
-             RequestedThemeVariant="Dark">
+             RequestedThemeVariant="Dark"
+             xmlns:converters="clr-namespace:EDHelp.Converters">
 
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
-  
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>
+    
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <!-- Bool -->
+                    <converters:BoolToExpanderIconConverter x:Key="BoolToExpanderIcon" />
+
+                    <!-- Object -->
+                    <converters:IsNotNullConverter x:Key="IsNotNull" />
+                    <converters:IsNullConverter x:Key="IsNull" />
+
+                    <!-- String -->
+                    <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmpty" />
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>
