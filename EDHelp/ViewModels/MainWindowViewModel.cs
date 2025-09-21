@@ -9,7 +9,7 @@ namespace EDHelp.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly DecklistParser _parser;
-    private readonly CardCacheService _cardCacheService; // Added
+    private readonly CardCacheService _cardCacheService;
 
     [ObservableProperty]
     private bool _isDragOver;
@@ -23,9 +23,9 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private DeckBuilderViewModel? _currentDeckBuilder;
 
-    public MainWindowViewModel(CardCacheService cardCacheService)
+    public MainWindowViewModel(CardCacheService cardCacheService, DecklistParser parser)
     {
-        _parser = new DecklistParser();
+        _parser = parser;
         _cardCacheService = cardCacheService;
     }
 
@@ -35,9 +35,9 @@ public partial class MainWindowViewModel : ViewModelBase
         try
         {
             DragText = "Importing deck...";
-            var deck = await _parser.ParseDecklistAsync(filePath);
+            var deck = _parser.ParseDecklistFromFile(filePath);
                 
-            CurrentDeckBuilder = new DeckBuilderViewModel(deck, _cardCacheService);
+            CurrentDeckBuilder = new DeckBuilderViewModel(deck, _cardCacheService, _parser);
             ShowImportView = false;
         }
         catch (Exception ex)

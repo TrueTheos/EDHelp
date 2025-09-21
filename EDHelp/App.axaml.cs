@@ -14,7 +14,7 @@ namespace EDHelp;
 
 public partial class App : Application
 {
-    private ServiceProvider? _serviceProvider;
+    public static ServiceProvider serviceProvider { get; private set; }
     
     public override void Initialize()
     {
@@ -27,11 +27,12 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             DisableAvaloniaDataAnnotationValidation();
-            var cardCacheService = _serviceProvider?.GetRequiredService<CardCacheService>();
+            var cardCacheService = serviceProvider.GetRequiredService<CardCacheService>();
+            var parser = serviceProvider.GetRequiredService<DecklistParser>();
             desktop.MainWindow = new MainWindow
             {
                 
-                DataContext = new MainWindowViewModel(cardCacheService),
+                DataContext = new MainWindowViewModel(cardCacheService, parser),
             };
         }
 
@@ -55,7 +56,9 @@ public partial class App : Application
         
         services.AddSingleton<HttpClient>();
         services.AddSingleton<CardCacheService>();
+        services.AddSingleton<MoxfieldService>();
+        services.AddSingleton<DecklistParser>();
         
-        _serviceProvider = services.BuildServiceProvider();
+        serviceProvider = services.BuildServiceProvider();
     }
 }

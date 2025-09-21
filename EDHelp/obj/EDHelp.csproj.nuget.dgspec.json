@@ -71,6 +71,14 @@
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
               "version": "[10.0.0-rc.1.25451.107, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.4, )"
+            },
+            "Selenium.WebDriver": {
+              "target": "Package",
+              "version": "[4.35.0, )"
             }
           },
           "imports": [

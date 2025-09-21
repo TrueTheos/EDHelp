@@ -37,7 +37,7 @@ public class CachedCardImage : Image
     {
         base.OnAttachedToVisualTree(e);
         
-        _cardCacheService ??= new CardCacheService(new System.Net.Http.HttpClient());
+        _cardCacheService ??= new CardCacheService();
         
         _ = LoadCardImageAsync();
     }

@@ -8,18 +8,24 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EDHelp.Models;
 using EDHelp.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EDHelp.ViewModels;
 
 public partial class DeckBuilderViewModel : ObservableObject
 {
     private readonly CardCacheService _cardCacheService;
+    private readonly MoxfieldService _moxfieldService;
+    private readonly DecklistParser _parser;
 
     [ObservableProperty]
     private ObservableCollection<DeckCard> _cards;
 
     [ObservableProperty]
     private ObservableCollection<CardTypeGroup> _groupedCards;
+    
+    [ObservableProperty]
+    private ObservableCollection<DeckCard> _moxfieldCommonCards;
 
     [ObservableProperty]
     private Card? _selectedCard;
@@ -33,17 +39,16 @@ public partial class DeckBuilderViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<ManaCurvePoint> _manaCurve;
 
-
-    public string deckName { get; private set; }
     public Card? commander { get; private set; }
     public int totalCards { get; private set; }
     
-    public DeckBuilderViewModel(Deck deck, CardCacheService cardCacheService)
+    public DeckBuilderViewModel(Deck deck, CardCacheService cardCacheService, DecklistParser parser)
     {
-        deckName = deck.name;
         commander = deck.commander;
         totalCards = deck.totalCards;
         _cardCacheService = cardCacheService;
+        _parser = parser;
+        _moxfieldService = App.serviceProvider.GetRequiredService<MoxfieldService>();
         _cards = new ObservableCollection<DeckCard>(deck.cards);
         _groupedCards = new ObservableCollection<CardTypeGroup>();
         _manaCurve = new ObservableCollection<ManaCurvePoint>();
@@ -180,7 +185,6 @@ public partial class DeckBuilderViewModel : ObservableObject
     {
         if (string.IsNullOrEmpty(manaCost)) return 0;
         
-        // Simple CMC calculation - count numbers and mana symbols
         var cmc = 0;
         var i = 0;
         
@@ -197,7 +201,7 @@ public partial class DeckBuilderViewModel : ObservableObject
                     cmc += int.Parse(symbol.ToString());
                 else if (symbol is 'W' or 'U' or 'B' or 'R' or 'G' or 'C')
                     cmc += 1;
-                i += 2; // Skip the symbol and closing brace
+                i += 2;
             }
             i++;
         }
@@ -212,9 +216,27 @@ public partial class DeckBuilderViewModel : ObservableObject
             deckCard.card.type?.Contains("Creature") == true)
         {
             commander = deckCard.card;
+
+            _moxfieldCommonCards = new();
+
+            var topDecks = await _moxfieldService.ExportTopDecksForCommander(commander.name);
+            List<Deck> parsedDecks = new();
+            foreach (var deck in topDecks)
+            {
+                parsedDecks.Add(_parser.ParseDeckList(deck));
+            }
+
+            var commonCards = FindCommonCards(parsedDecks);
+            foreach (var commonCard in commonCards)
+            {
+                if(commonCard.card.name is "Forest" or "Swamp" or "Island" or "Plains" or "Mountain") continue;
+                MoxfieldCommonCards.Add(commonCard);
+            }
+            
+            OnPropertyChanged(nameof(MoxfieldCommonCards));
+            
             OnPropertyChanged(nameof(commander));
             
-            // Cache the card image
             await _cardCacheService.GetCard(deckCard.card);
         }
     }
@@ -287,7 +309,6 @@ public partial class DeckBuilderViewModel : ObservableObject
         SelectedCard = deckCard.card;
         IsCardPinned = false;
         
-        // Cache the card if not already cached
         await _cardCacheService.GetCard(deckCard.card);
     }
 
@@ -308,6 +329,27 @@ public partial class DeckBuilderViewModel : ObservableObject
     private void ToggleGroup(CardTypeGroup group)
     {
         group.IsExpanded = !group.IsExpanded;
+    }
+
+    private IOrderedEnumerable<DeckCard> FindCommonCards(List<Deck> decks)
+    {
+        var counts = new Dictionary<string, int>();
+        foreach (var deck in decks)
+        {
+            foreach (var deckCard in deck.cards)
+            {
+                counts[deckCard.card.name] = counts.GetValueOrDefault(deckCard.card.name) + 1;
+            }
+        }
+
+        return counts
+            .Select(kv => new DeckCard
+            {
+                card = new Card { name = kv.Key },
+                quantity = kv.Value
+            })
+            .OrderByDescending(dc => dc.quantity)
+            .ThenBy(dc => dc.card.name);
     }
 }
 

@@ -14,7 +14,9 @@
           "Avalonia.Fonts.Inter": "11.3.4",
           "Avalonia.Themes.Fluent": "11.3.4",
           "CommunityToolkit.Mvvm": "8.2.1",
-          "Microsoft.Extensions.DependencyInjection": "10.0.0-rc.1.25451.107"
+          "Microsoft.Extensions.DependencyInjection": "10.0.0-rc.1.25451.107",
+          "Newtonsoft.Json": "13.0.4",
+          "Selenium.WebDriver": "4.35.0"
         },
         "runtime": {
           "EDHelp.dll": {}
@@ -385,6 +387,39 @@
           }
         }
       },
+      "Newtonsoft.Json/13.0.4": {
+        "runtime": {
+          "lib/net6.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.4.30916"
+          }
+        }
+      },
+      "Selenium.WebDriver/4.35.0": {
+        "runtime": {
+          "lib/net8.0/WebDriver.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/linux/native/selenium-manager": {
+            "rid": "linux",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/osx/native/selenium-manager": {
+            "rid": "osx",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win/native/selenium-manager.exe": {
+            "rid": "win",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
       "SkiaSharp/2.88.9": {
         "dependencies": {
           "SkiaSharp.NativeAssets.Win32": "2.88.9",
@@ -640,6 +675,20 @@
       "sha512": "sha512-Wm2HfC0GlWExQmJajq85FHM9iHEOm61Z1c2YLivbzI6R5eT+TTSyfk3RHUra4oBU+oj1XhOIQ5hLW6Kg2r85tg==",
       "path": "microsoft.extensions.dependencyinjection.abstractions/10.0.0-rc.1.25451.107",
       "hashPath": "microsoft.extensions.dependencyinjection.abstractions.10.0.0-rc.1.25451.107.nupkg.sha512"
+    },
+    "Newtonsoft.Json/13.0.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pdgNNMai3zv51W5aq268sujXUyx7SNdE2bj1wZcWjAQrKMFZV260lbqYop1d2GM67JI1huLRwxo9ZqnfF/lC6A==",
+      "path": "newtonsoft.json/13.0.4",
+      "hashPath": "newtonsoft.json.13.0.4.nupkg.sha512"
+    },
+    "Selenium.WebDriver/4.35.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-C9OrObS2KLyUQDJNRY883JAc4n5q58pBYmY954hf+lGMQQcsz4Ias2mk91lHkLXFX+2qMttya4df9lGP1SLiGQ==",
+      "path": "selenium.webdriver/4.35.0",
+      "hashPath": "selenium.webdriver.4.35.0.nupkg.sha512"
     },
     "SkiaSharp/2.88.9": {
       "type": "package",

@@ -37,11 +37,6 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="15">
-                    <TextBlock Text="{Binding deckName}" 
-                              FontSize="20" 
-                              FontWeight="Bold" 
-                              Foreground="White"/>
-                    
                     <TextBlock Text="{Binding totalCards, StringFormat=\{0\} cards}"
                                FontSize="14" 
                                Foreground="#cccccc" 
@@ -213,18 +208,22 @@
         <!-- Right Sidebar -->
         <Grid Grid.Row="1" Grid.Column="1" Background="#252526">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="0.2*"/>
             </Grid.RowDefinitions>
 
-            <!-- Card Image Section -->
+            <!-- Card Image and Common Cards Section -->
             <Border Grid.Row="0" Background="#1e1e1e" Margin="10" CornerRadius="5">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+                    
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
                     <!-- Card Image Header -->
                     <Grid Grid.Row="0" Margin="10,10,10,5">
@@ -257,8 +256,16 @@
                         </StackPanel>
                     </Grid>
 
+                    <!-- Common Cards Header -->
+                    <TextBlock Grid.Row="0" Grid.Column="1"
+                               Text="Common Cards"
+                               FontSize="14" 
+                               FontWeight="SemiBold" 
+                               Foreground="White"
+                               Margin="10,10,10,5"/>
+
                     <!-- Card Image and Details -->
-                    <ScrollViewer Grid.Row="1" Margin="10,0,10,10">
+                    <ScrollViewer Grid.Row="1" Grid.Column="0" Margin="10,0,10,10">
                         <StackPanel>
                             <StackPanel IsVisible="{Binding SelectedCard, Converter={StaticResource IsNotNull}}">
                                 <!-- Card Image -->
@@ -308,23 +315,63 @@
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
+                    
+                    <!-- Moxfield Common Cards -->
+                    <ScrollViewer Grid.Row="1" Grid.Column="1" Margin="10,0,10,10">
+                        <ItemsControl ItemsSource="{Binding MoxfieldCommonCards}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{StaticResource CardBrush}"
+                                            Margin="0,0,0,1"
+                                            Padding="8,6"
+                                            CornerRadius="3">
+                                        <Border.Styles>
+                                            <Style Selector="Border:pointerover">
+                                                <Setter Property="Background" Value="{StaticResource HoverBrush}"/>
+                                            </Style>
+                                        </Border.Styles>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <!-- Quantity -->
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding quantity}" 
+                                                       FontSize="12"
+                                                       FontWeight="Bold"
+                                                       Foreground="#cccccc"
+                                                       Width="25"
+                                                       TextAlignment="Left"
+                                                       VerticalAlignment="Center"/>
+                                            
+                                            <!-- Card Name -->
+                                            <Button Grid.Column="1" 
+                                                    Content="{Binding card.name}"
+                                                    Foreground="White"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="15,0,0,0"
+                                                    Command="{Binding $parent[UserControl].((vm:DeckBuilderViewModel)DataContext).ShowCardDetailsCommand}"
+                                                    CommandParameter="{Binding}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
                 </Grid>
             </Border>
 
-            <!-- Spacer -->
-            <Rectangle Grid.Row="1"/>
-
             <!-- Mana Curve Section -->
-            <Border Grid.Row="2" Background="#1e1e1e" Margin="10" CornerRadius="5">
+            <Border Grid.Row="1" Background="#1e1e1e" Margin="10" CornerRadius="5">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
 
                     <!-- Mana Curve Header -->
                     <TextBlock Grid.Row="0" 
@@ -337,12 +384,6 @@
                     <!-- Mana Curve Chart -->
                     <controls:ManaCurveChart Grid.Row="1" 
                                              ManaCurve="{Binding ManaCurve}"
-                                             Height="120"
-                                             Margin="10,0,10,10"/>
-                    
-                    <controls:ManaCurveChart Grid.Row="1" Grid.Column="1"
-                                             ManaCurve="{Binding ManaCurve}"
-                                             Height="120"
                                              Margin="10,0,10,10"/>
                 </Grid>
             </Border>

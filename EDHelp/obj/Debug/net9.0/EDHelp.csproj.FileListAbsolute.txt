@@ -75,3 +75,8 @@ C:\Dev\Personal\Software\EDHelp\EDHelp\obj\Debug\net9.0\ref\EDHelp.dll
 C:\Dev\Personal\Software\EDHelp\EDHelp\obj\Debug\net9.0\EDHelp.sourcelink.json
 C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.dll
 C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\Newtonsoft.Json.dll
+C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\WebDriver.dll
+C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\runtimes\linux\native\selenium-manager
+C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\runtimes\osx\native\selenium-manager
+C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\runtimes\win\native\selenium-manager.exe

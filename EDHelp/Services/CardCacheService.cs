@@ -12,13 +12,12 @@ namespace EDHelp.Services;
 
 public class CardCacheService
 {
-    private readonly HttpClient _httpClient;
+    private HttpClient _httpClient = new();
     private readonly string _cacheDirectory;
     private readonly Dictionary<string, Card> _memoryCache;
 
-    public CardCacheService(HttpClient httpClient)
+    public CardCacheService()
     {
-        _httpClient = httpClient;
         _cacheDirectory = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "EDHelp",
