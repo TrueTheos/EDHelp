@@ -40,7 +40,7 @@ public class DecklistParser
             if (cardInfo != null)
             {
                 var card = new Card { name = cardInfo.cardName };
-                deck.cards.Add(new DeckCard { card = card, quantity = cardInfo.quantity });
+                deck.cards.Add(new DeckCard { card = card, Quantity = cardInfo.quantity });
             }
             else
             {
@@ -49,17 +49,6 @@ public class DecklistParser
         }
 
         return deck;
-    }
-
-    private bool IsHeaderLine(string line)
-    {
-        var lowerLine = line.ToLower();
-        return lowerLine.Contains("commander") ||
-               lowerLine.Contains("deck") ||
-               lowerLine.Contains("main") ||
-               lowerLine.Contains("sideboard") ||
-               lowerLine.Contains("maybeboard") ||
-               line.All(c => char.IsLetter(c) || char.IsWhiteSpace(c)) && line.Length < 20;
     }
 
     private CardInfo ParseCardLine(string line)

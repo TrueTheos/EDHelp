@@ -68,6 +68,10 @@
               "target": "Package",
               "version": "[8.2.1, )"
             },
+            "FuzzySharp": {
+              "target": "Package",
+              "version": "[2.0.2, )"
+            },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
               "version": "[10.0.0-rc.1.25451.107, )"

@@ -3,13 +3,14 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EDHelp.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EDHelp.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly DecklistParser _parser;
-    private readonly CardCacheService _cardCacheService;
+    private readonly ICardCacheService _cardCacheService;
 
     [ObservableProperty]
     private bool _isDragOver;
@@ -23,7 +24,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private DeckBuilderViewModel? _currentDeckBuilder;
 
-    public MainWindowViewModel(CardCacheService cardCacheService, DecklistParser parser)
+    public MainWindowViewModel(ICardCacheService cardCacheService, DecklistParser parser)
     {
         _parser = parser;
         _cardCacheService = cardCacheService;
@@ -36,8 +37,9 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             DragText = "Importing deck...";
             var deck = _parser.ParseDecklistFromFile(filePath);
-                
-            CurrentDeckBuilder = new DeckBuilderViewModel(deck, _cardCacheService, _parser);
+
+            CurrentDeckBuilder = App.serviceProvider.GetRequiredService<DeckBuilderViewModel>();
+            CurrentDeckBuilder.InitDeck(deck);
             ShowImportView = false;
         }
         catch (Exception ex)

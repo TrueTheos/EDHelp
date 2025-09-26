@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "VPR/G6X1poE=",
+  "dgSpecHash": "GefqQodw5sA=",
   "success": true,
   "projectFilePath": "C:\\Dev\\Personal\\Software\\EDHelp\\EDHelp\\EDHelp.csproj",
   "expectedPackageFiles": [
@@ -20,6 +20,7 @@
     "C:\\Users\\loiuy\\.nuget\\packages\\avalonia.win32\\11.3.4\\avalonia.win32.11.3.4.nupkg.sha512",
     "C:\\Users\\loiuy\\.nuget\\packages\\avalonia.x11\\11.3.4\\avalonia.x11.11.3.4.nupkg.sha512",
     "C:\\Users\\loiuy\\.nuget\\packages\\communitytoolkit.mvvm\\8.2.1\\communitytoolkit.mvvm.8.2.1.nupkg.sha512",
+    "C:\\Users\\loiuy\\.nuget\\packages\\fuzzysharp\\2.0.2\\fuzzysharp.2.0.2.nupkg.sha512",
     "C:\\Users\\loiuy\\.nuget\\packages\\harfbuzzsharp\\8.3.1.1\\harfbuzzsharp.8.3.1.1.nupkg.sha512",
     "C:\\Users\\loiuy\\.nuget\\packages\\harfbuzzsharp.nativeassets.linux\\8.3.1.1\\harfbuzzsharp.nativeassets.linux.8.3.1.1.nupkg.sha512",
     "C:\\Users\\loiuy\\.nuget\\packages\\harfbuzzsharp.nativeassets.macos\\8.3.1.1\\harfbuzzsharp.nativeassets.macos.8.3.1.1.nupkg.sha512",

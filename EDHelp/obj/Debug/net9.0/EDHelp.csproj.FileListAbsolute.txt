@@ -80,3 +80,4 @@ C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\WebDriver.dll
 C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\runtimes\linux\native\selenium-manager
 C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\runtimes\osx\native\selenium-manager
 C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\runtimes\win\native\selenium-manager.exe
+C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\FuzzySharp.dll

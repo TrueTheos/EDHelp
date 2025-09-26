@@ -14,8 +14,8 @@ namespace EDHelp.ViewModels;
 
 public partial class DeckBuilderViewModel : ObservableObject
 {
-    private readonly CardCacheService _cardCacheService;
-    private readonly MoxfieldService _moxfieldService;
+    private readonly ICardCacheService _cardCacheService;
+    private readonly IMoxfieldService _moxfieldService;
     private readonly DecklistParser _parser;
 
     [ObservableProperty]
@@ -38,28 +38,28 @@ public partial class DeckBuilderViewModel : ObservableObject
 
     [ObservableProperty]
     private ObservableCollection<ManaCurvePoint> _manaCurve;
-
+    
     public Card? commander { get; private set; }
     public int totalCards { get; private set; }
     
-    public DeckBuilderViewModel(Deck deck, CardCacheService cardCacheService, DecklistParser parser)
+    public DeckBuilderViewModel(ICardCacheService cardCacheService, IMoxfieldService moxfieldService, DecklistParser parser)
     {
-        commander = deck.commander;
-        totalCards = deck.totalCards;
         _cardCacheService = cardCacheService;
+        _moxfieldService = moxfieldService;
         _parser = parser;
-        _moxfieldService = App.serviceProvider.GetRequiredService<MoxfieldService>();
-        _cards = new ObservableCollection<DeckCard>(deck.cards);
         _groupedCards = new ObservableCollection<CardTypeGroup>();
         _manaCurve = new ObservableCollection<ManaCurvePoint>();
-        
-        Init();
         
         PropertyChanged += OnPropertyChanged;
     }
 
-    private async void Init()
+    public async void InitDeck(Deck deck)
     {
+        commander = deck.commander;
+        totalCards = deck.totalCards;
+        
+        _cards = new ObservableCollection<DeckCard>(deck.cards);
+        
         var fetchedCards = await _cardCacheService.FetchDeck(_cards.ToList());
 
         _cards = new ObservableCollection<DeckCard>(fetchedCards);
@@ -76,6 +76,7 @@ public partial class DeckBuilderViewModel : ObservableObject
             FilterCards();
         }
     }
+    
     private void GroupCardsByType()
     {
         var groups = _cards
@@ -85,7 +86,7 @@ public partial class DeckBuilderViewModel : ObservableObject
             {
                 typeName = g.Key,
                 cards = new ObservableCollection<DeckCard>(g.OrderBy(dc => dc.card.name)),
-                count = g.Sum(dc => dc.quantity)
+                count = g.Sum(dc => dc.Quantity)
             });
 
         _groupedCards.Clear();
@@ -114,7 +115,7 @@ public partial class DeckBuilderViewModel : ObservableObject
             {
                 typeName = g.Key,
                 cards = new ObservableCollection<DeckCard>(g.OrderBy(dc => dc.card.name)),
-                count = g.Sum(dc => dc.quantity)
+                count = g.Sum(dc => dc.Quantity)
             });
 
         _groupedCards.Clear();
@@ -131,12 +132,12 @@ public partial class DeckBuilderViewModel : ObservableObject
         foreach (var deckCard in _cards)
         {
             var cmc = GetConvertedManaCost(deckCard.card.manaCost);
-            if (cmc >= 7) cmc = 7; // Group 7+ together
+            if (cmc >= 7) cmc = 7;
             
             if (curve.ContainsKey(cmc))
-                curve[cmc] += deckCard.quantity;
+                curve[cmc] += deckCard.Quantity;
             else
-                curve[cmc] = deckCard.quantity;
+                curve[cmc] = deckCard.Quantity;
         }
 
         _manaCurve.Clear();
@@ -208,7 +209,7 @@ public partial class DeckBuilderViewModel : ObservableObject
         
         return cmc;
     }
-
+    
     [RelayCommand]
     private async Task SetAsCommander(DeckCard deckCard)
     {
@@ -244,9 +245,9 @@ public partial class DeckBuilderViewModel : ObservableObject
     [RelayCommand]
     private void RemoveCard(DeckCard deckCard)
     {
-        if (deckCard.quantity > 1)
+        if (deckCard.Quantity > 1)
         {
-            deckCard.quantity--;
+            deckCard.Quantity--;
         }
         else
         {
@@ -255,7 +256,7 @@ public partial class DeckBuilderViewModel : ObservableObject
             _cards.Remove(deckCard);
         }
         
-        totalCards = _cards.Sum(dc => dc.quantity);
+        totalCards = _cards.Sum(dc => dc.Quantity);
         OnPropertyChanged(nameof(totalCards));
         CalculateManaCurve();
         
@@ -268,18 +269,17 @@ public partial class DeckBuilderViewModel : ObservableObject
     [RelayCommand]
     private void IncreaseQuantity(DeckCard deckCard)
     {
-        if (deckCard.quantity < 4 || deckCard.card.type?.Contains("Land") == true)
+        if (deckCard.card.type?.Contains("Land") == true)
         {
-            deckCard.quantity++;
+            deckCard.Quantity++;
             totalCards++;
             OnPropertyChanged(nameof(totalCards));
             CalculateManaCurve();
             
-            // Update group count
             var group = _groupedCards.FirstOrDefault(g => g.cards.Contains(deckCard));
             if (group != null)
             {
-                group.count = group.cards.Sum(dc => dc.quantity);
+                group.count = group.cards.Sum(dc => dc.Quantity);
             }
         }
     }
@@ -287,18 +287,17 @@ public partial class DeckBuilderViewModel : ObservableObject
     [RelayCommand]
     private void DecreaseQuantity(DeckCard deckCard)
     {
-        if (deckCard.quantity > 1)
+        if (deckCard.Quantity > 1)
         {
-            deckCard.quantity--;
+            deckCard.Quantity--;
             totalCards--;
             OnPropertyChanged(nameof(totalCards));
             CalculateManaCurve();
             
-            // Update group count
             var group = _groupedCards.FirstOrDefault(g => g.cards.Contains(deckCard));
             if (group != null)
             {
-                group.count = group.cards.Sum(dc => dc.quantity);
+                group.count = group.cards.Sum(dc => dc.Quantity);
             }
         }
     }
@@ -346,9 +345,9 @@ public partial class DeckBuilderViewModel : ObservableObject
             .Select(kv => new DeckCard
             {
                 card = new Card { name = kv.Key },
-                quantity = kv.Value
+                Quantity = kv.Value
             })
-            .OrderByDescending(dc => dc.quantity)
+            .OrderByDescending(dc => dc.Quantity)
             .ThenBy(dc => dc.card.name);
     }
 }

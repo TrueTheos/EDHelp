@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace EDHelp.Models;
 
@@ -12,8 +13,9 @@ public class Deck
     public int totalCards { get; set; }
 }
     
-public class DeckCard
+public partial class DeckCard : ObservableObject
 {
     public Card card { get; set; } = null!;
-    public int quantity { get; set; }
+
+    [ObservableProperty] private int _quantity;
 }

@@ -4,6 +4,7 @@
     <option name="projectPerEditor">
       <map>
         <entry key="EDHelp/App.axaml" value="EDHelp/EDHelp.csproj" />
+        <entry key="EDHelp/Controls/AutoCompleteTextBox.axaml" value="EDHelp/EDHelp.csproj" />
         <entry key="EDHelp/Controls/ManaCostControl.axaml" value="EDHelp/EDHelp.csproj" />
         <entry key="EDHelp/Controls/ManaCurveChart.axaml" value="EDHelp/EDHelp.csproj" />
         <entry key="EDHelp/Views/DeckBuilderView.axaml" value="EDHelp/EDHelp.csproj" />

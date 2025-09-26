@@ -4,7 +4,9 @@ using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Avalonia.Markup.Xaml;
+using EDHelp.Controls;
 using EDHelp.Services;
 using EDHelp.ViewModels;
 using EDHelp.Views;
@@ -19,6 +21,7 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        
         SetupServices();
     }
 
@@ -27,11 +30,10 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             DisableAvaloniaDataAnnotationValidation();
-            var cardCacheService = serviceProvider.GetRequiredService<CardCacheService>();
+            var cardCacheService = serviceProvider.GetRequiredService<ICardCacheService>();
             var parser = serviceProvider.GetRequiredService<DecklistParser>();
             desktop.MainWindow = new MainWindow
             {
-                
                 DataContext = new MainWindowViewModel(cardCacheService, parser),
             };
         }
@@ -52,13 +54,19 @@ public partial class App : Application
     
     private void SetupServices()
     {
-        var services = new ServiceCollection();
+        var collection = new ServiceCollection();
         
-        services.AddSingleton<HttpClient>();
-        services.AddSingleton<CardCacheService>();
-        services.AddSingleton<MoxfieldService>();
-        services.AddSingleton<DecklistParser>();
+        collection.AddSingleton<ICardCacheService, CardCacheService>();
+        collection.AddSingleton<IMoxfieldService, MoxfieldService>();
+        collection.AddSingleton<DecklistParser>();
+        collection.AddSingleton<IScryfallService, ScryfallService>();
+
+        collection.AddSingleton<DeckBuilderViewModel>();
+        collection.AddSingleton<MainWindowViewModel>();
+        collection.AddSingleton<CachedCardImage>();
         
-        serviceProvider = services.BuildServiceProvider();
+        serviceProvider = collection.BuildServiceProvider();
+
+        _ = serviceProvider.GetService<CardCacheService>()?.InitializeAsync();
     }
 }

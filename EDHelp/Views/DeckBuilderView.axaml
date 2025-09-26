@@ -135,7 +135,7 @@
                                                             Command="{Binding $parent[UserControl].((vm:DeckBuilderViewModel)DataContext).DecreaseQuantityCommand}"
                                                             CommandParameter="{Binding}"/>
                                                     
-                                                    <TextBlock Text="{Binding quantity}" 
+                                                    <TextBlock Text="{Binding Quantity}" 
                                                                Foreground="#cccccc" 
                                                                FontWeight="Bold"
                                                                Width="20"
@@ -338,7 +338,7 @@
                                             
                                             <!-- Quantity -->
                                             <TextBlock Grid.Column="0"
-                                                       Text="{Binding quantity}" 
+                                                       Text="{Binding Quantity}" 
                                                        FontSize="12"
                                                        FontWeight="Bold"
                                                        Foreground="#cccccc"

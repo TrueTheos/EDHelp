@@ -341,6 +341,15 @@
           "buildTransitive/netstandard2.1/CommunityToolkit.Mvvm.targets": {}
         }
       },
+      "FuzzySharp/2.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/netcoreapp2.1/FuzzySharp.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.1/FuzzySharp.dll": {}
+        }
+      },
       "HarfBuzzSharp/8.3.1.1": {
         "type": "package",
         "dependencies": {
@@ -1137,6 +1146,26 @@
         "lib/netstandard2.1/CommunityToolkit.Mvvm.xml"
       ]
     },
+    "FuzzySharp/2.0.2": {
+      "sha512": "sBKqWxw3g//peYxDZ8JipRlyPbIyBtgzqBVA5GqwHVeqtIrw75maGXAllztf+1aJhchD+drcQIgf2mFho8ZV8A==",
+      "type": "package",
+      "path": "fuzzysharp/2.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "fuzzysharp.2.0.2.nupkg.sha512",
+        "fuzzysharp.nuspec",
+        "lib/net45/FuzzySharp.dll",
+        "lib/net46/FuzzySharp.dll",
+        "lib/net461/FuzzySharp.dll",
+        "lib/netcoreapp2.0/FuzzySharp.dll",
+        "lib/netcoreapp2.1/FuzzySharp.dll",
+        "lib/netstandard1.6/FuzzySharp.dll",
+        "lib/netstandard2.0/FuzzySharp.dll",
+        "lib/netstandard2.1/FuzzySharp.dll"
+      ]
+    },
     "HarfBuzzSharp/8.3.1.1": {
       "sha512": "tLZN66oe/uiRPTZfrCU4i8ScVGwqHNh5MHrXj0yVf4l7Mz0FhTGnQ71RGySROTmdognAs0JtluHkL41pIabWuQ==",
       "type": "package",
@@ -1653,6 +1682,7 @@
       "Avalonia.Fonts.Inter >= 11.3.4",
       "Avalonia.Themes.Fluent >= 11.3.4",
       "CommunityToolkit.Mvvm >= 8.2.1",
+      "FuzzySharp >= 2.0.2",
       "Microsoft.Extensions.DependencyInjection >= 10.0.0-rc.1.25451.107",
       "Newtonsoft.Json >= 13.0.4",
       "Selenium.WebDriver >= 4.35.0"
@@ -1724,6 +1754,10 @@
           "CommunityToolkit.Mvvm": {
             "target": "Package",
             "version": "[8.2.1, )"
+          },
+          "FuzzySharp": {
+            "target": "Package",
+            "version": "[2.0.2, )"
           },
           "Microsoft.Extensions.DependencyInjection": {
             "target": "Package",

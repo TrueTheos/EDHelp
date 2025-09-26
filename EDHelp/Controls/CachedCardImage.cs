@@ -20,10 +20,13 @@ public class CachedCardImage : Image
         set => SetValue(CardProperty, value);
     }
 
-    private CardCacheService? _cardCacheService;
+    private ICardCacheService _cardCacheService;
 
-    public CachedCardImage()
+    public CachedCardImage(){}
+
+    public CachedCardImage(ICardCacheService cardCacheService)
     {
+        _cardCacheService = cardCacheService;
         PropertyChanged += async (sender, e) =>
         {
             if (e.Property == CardProperty)
@@ -36,8 +39,6 @@ public class CachedCardImage : Image
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
-        
-        _cardCacheService ??= new CardCacheService();
         
         _ = LoadCardImageAsync();
     }
