@@ -47,13 +47,9 @@
                         <TextBlock Text="{Binding commander.name}" FontSize="12" Foreground="Gold"/>
                     </StackPanel>
                 </StackPanel>
-
-                <!-- Search Box -->
-                <TextBox Grid.Column="1" 
-                         Text="{Binding SearchText}"
-                         Watermark="Search cards..."
-                         Width="200"
-                         Height="30"/>
+                
+                <AutoCompleteBox Width="200" Grid.Column="1" x:Name="CardSearchBox"  FilterMode="None"
+                                 SelectedItem="{Binding SearchCard}"/>
             </Grid>
         </Border>
 

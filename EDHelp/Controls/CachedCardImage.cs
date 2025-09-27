@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using EDHelp.Models;
 using EDHelp.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EDHelp.Controls;
 
@@ -22,11 +23,10 @@ public class CachedCardImage : Image
 
     private ICardCacheService _cardCacheService;
 
-    public CachedCardImage(){}
-
-    public CachedCardImage(ICardCacheService cardCacheService)
+    public CachedCardImage()
     {
-        _cardCacheService = cardCacheService;
+        _cardCacheService = App.serviceProvider?.GetRequiredService<ICardCacheService>();
+        
         PropertyChanged += async (sender, e) =>
         {
             if (e.Property == CardProperty)

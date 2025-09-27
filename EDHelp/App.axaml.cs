@@ -67,6 +67,6 @@ public partial class App : Application
         
         serviceProvider = collection.BuildServiceProvider();
 
-        _ = serviceProvider.GetService<CardCacheService>()?.InitializeAsync();
+        _ = serviceProvider.GetService<ICardCacheService>()?.InitializeAsync();
     }
 }

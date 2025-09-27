@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EDHelp.Models;
@@ -32,12 +34,28 @@ public partial class DeckBuilderViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _isCardPinned;
-
-    [ObservableProperty]
-    private string _searchText = string.Empty;
+    
+    private CancellationTokenSource? _currentSearchCts;
+    private readonly SemaphoreSlim _searchSemaphore = new(1, 1);
 
     [ObservableProperty]
     private ObservableCollection<ManaCurvePoint> _manaCurve;
+
+    [ObservableProperty]
+    private ObservableCollection<string> _suggestedCards;
+
+    private string _searchCard;
+    public string SearchCard
+    {
+        get => _searchCard;
+        set
+        {
+            if (SetProperty(ref _searchCard, value))
+            {
+                OnCardSearchSelected();
+            }
+        }
+    }
     
     public Card? commander { get; private set; }
     public int totalCards { get; private set; }
@@ -49,8 +67,6 @@ public partial class DeckBuilderViewModel : ObservableObject
         _parser = parser;
         _groupedCards = new ObservableCollection<CardTypeGroup>();
         _manaCurve = new ObservableCollection<ManaCurvePoint>();
-        
-        PropertyChanged += OnPropertyChanged;
     }
 
     public async void InitDeck(Deck deck)
@@ -69,14 +85,12 @@ public partial class DeckBuilderViewModel : ObservableObject
         CalculateManaCurve();
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private async Task OnCardSearchSelected()
     {
-        if (e.PropertyName == nameof(SearchText))
-        {
-            FilterCards();
-        }
+        var card = await _cardCacheService.GetCardByName(_searchCard);
+        ShowCardDetails(card);
     }
-    
+
     private void GroupCardsByType()
     {
         var groups = _cards
@@ -95,33 +109,31 @@ public partial class DeckBuilderViewModel : ObservableObject
             _groupedCards.Add(group);
         }
     }
-
-    private void FilterCards()
+    
+    public async Task<IEnumerable<object>> UpdateSearchList(string? searchText, CancellationToken cancellationToken) 
     {
-        if (string.IsNullOrWhiteSpace(SearchText))
+        _currentSearchCts?.Cancel();
+        _currentSearchCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        
+        await _searchSemaphore.WaitAsync(cancellationToken);
+        
+        try
         {
-            GroupCardsByType();
-            return;
+            await Task.Delay(150, _currentSearchCts.Token);
+            
+            List<string> bestChoices = await Task.Run(() => 
+                    _cardCacheService.FindBestCardNameMatches(searchText), 
+                _currentSearchCts.Token);
+                
+            return bestChoices;
         }
-
-        var filteredCards = _cards
-            .Where(dc => dc.card.name.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
-            .ToList();
-
-        var groups = filteredCards
-            .GroupBy(dc => GetCardTypeCategory(dc.card))
-            .OrderBy(g => GetTypeOrder(g.Key))
-            .Select(g => new CardTypeGroup
-            {
-                typeName = g.Key,
-                cards = new ObservableCollection<DeckCard>(g.OrderBy(dc => dc.card.name)),
-                count = g.Sum(dc => dc.Quantity)
-            });
-
-        _groupedCards.Clear();
-        foreach (var group in groups)
+        catch (OperationCanceledException)
         {
-            _groupedCards.Add(group);
+            return Enumerable.Empty<object>();
+        }
+        finally
+        {
+            _searchSemaphore.Release();
         }
     }
 
@@ -301,7 +313,7 @@ public partial class DeckBuilderViewModel : ObservableObject
             }
         }
     }
-
+    
     [RelayCommand]
     private async Task ShowCardDetails(DeckCard deckCard)
     {
@@ -309,6 +321,12 @@ public partial class DeckBuilderViewModel : ObservableObject
         IsCardPinned = false;
         
         await _cardCacheService.GetCard(deckCard.card);
+    }
+    
+    private void ShowCardDetails(Card card)
+    {
+        SelectedCard = card;
+        IsCardPinned = false;
     }
 
     [RelayCommand]
@@ -329,7 +347,7 @@ public partial class DeckBuilderViewModel : ObservableObject
     {
         group.IsExpanded = !group.IsExpanded;
     }
-
+    
     private IOrderedEnumerable<DeckCard> FindCommonCards(List<Deck> decks)
     {
         var counts = new Dictionary<string, int>();

@@ -11,12 +11,12 @@ using FuzzySharp;
 
 namespace EDHelp.Services;
 
-public class CardCacheService : ICardCacheService, IAsyncInitializable
+public class CardCacheService : ICardCacheService
 {
     private readonly string _cacheDirectory;
     private readonly Dictionary<string, Card> _memoryCache;
     private IScryfallService _scryfallService;
-
+    
     private List<string> _allCardNames = new();
     
     public CardCacheService(IScryfallService scryfallService)
@@ -39,22 +39,112 @@ public class CardCacheService : ICardCacheService, IAsyncInitializable
     {
         _allCardNames = await _scryfallService.GetAllCardNames();
     }
-    
-    public string FindBestCardNameMatch(string userInput)
-    {
-        return Process.ExtractOne(userInput, _allCardNames).Value;
-    }
-    
+
+    #region Card Search
     public List<string> FindBestCardNameMatches(string userInput, int limit = 5)
     {
         if (string.IsNullOrWhiteSpace(userInput) || userInput.Length < 2)
             return new List<string>();
             
-        var matches = Process.ExtractTop(userInput, _allCardNames, limit: limit)
+        var inputLower = userInput.ToLowerInvariant();
+        
+        var (startIndex, endIndex) = FindPrefixRange(inputLower);
+        
+        if (startIndex == -1)
+            return new List<string>();
+        
+        var rangeSize = endIndex - startIndex + 1;
+        
+        if (rangeSize <= limit)
+        {
+            return _allCardNames.GetRange(startIndex, rangeSize);
+        }
+        
+        var candidates = _allCardNames.GetRange(startIndex, Math.Min(rangeSize, limit * 20));
+        
+        var matches = Process.ExtractTop(userInput, candidates, limit: limit)
             .Select(result => result.Value)
             .ToList();
             
         return matches;
+    }
+
+    private (int start, int end) FindPrefixRange(string prefix)
+    {
+        int start = FindFirstPrefixMatch(prefix);
+        if (start == -1)
+            return (-1, -1);
+            
+        int end = FindLastPrefixMatch(prefix);
+        return (start, end);
+    }
+
+    private int FindFirstPrefixMatch(string prefix)
+    {
+        int left = 0, right = _allCardNames.Count - 1;
+        int result = -1;
+        
+        while (left <= right)
+        {
+            int mid = left + (right - left) / 2;
+            var midName = _allCardNames[mid].ToLowerInvariant();
+            
+            if (midName.StartsWith(prefix))
+            {
+                result = mid;
+                right = mid - 1;
+            }
+            else if (string.Compare(midName, prefix, StringComparison.Ordinal) < 0)
+            {
+                left = mid + 1;
+            }
+            else
+            {
+                right = mid - 1;
+            }
+        }
+        
+        return result;
+    }
+
+    private int FindLastPrefixMatch(string prefix)
+    {
+        int left = 0, right = _allCardNames.Count - 1;
+        int result = -1;
+        
+        while (left <= right)
+        {
+            int mid = left + (right - left) / 2;
+            var midName = _allCardNames[mid].ToLowerInvariant();
+            
+            if (midName.StartsWith(prefix))
+            {
+                result = mid;
+                left = mid + 1;
+            }
+            else if (string.Compare(midName, prefix, StringComparison.Ordinal) < 0)
+            {
+                left = mid + 1;
+            }
+            else
+            {
+                right = mid - 1;
+            }
+        }
+        
+        return result;
+    }
+    
+    #endregion
+    
+    public async Task<Card?> GetCardByName(string cardName)
+    {
+        if (string.IsNullOrWhiteSpace(cardName))
+            return null;
+
+        var card = new Card { name = cardName };
+            
+        return await GetCard(card);
     }
     
     public async Task<Card?> GetCardFromMemoryCache(Card card)
