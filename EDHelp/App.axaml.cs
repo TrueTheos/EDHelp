@@ -60,6 +60,7 @@ public partial class App : Application
         collection.AddSingleton<IMoxfieldService, MoxfieldService>();
         collection.AddSingleton<DecklistParser>();
         collection.AddSingleton<IScryfallService, ScryfallService>();
+        collection.AddSingleton<IComboFinderService, ComboFinderService>();
 
         collection.AddSingleton<DeckBuilderViewModel>();
         collection.AddSingleton<MainWindowViewModel>();

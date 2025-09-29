@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ public partial class DeckBuilderViewModel : ObservableObject
 {
     private readonly ICardCacheService _cardCacheService;
     private readonly IMoxfieldService _moxfieldService;
+    private readonly IComboFinderService _comboFinderService;
     private readonly DecklistParser _parser;
 
     [ObservableProperty]
@@ -30,7 +32,13 @@ public partial class DeckBuilderViewModel : ObservableObject
     private ObservableCollection<DeckCard> _moxfieldCommonCards;
 
     [ObservableProperty]
+    private ObservableCollection<MoxfieldDeck> _moxfieldBestDecks;
+
+    [ObservableProperty]
     private Card? _selectedCard;
+    
+    [ObservableProperty]
+    private DeckCard? _selectedCardInDeck;
 
     [ObservableProperty]
     private bool _isCardPinned;
@@ -60,10 +68,11 @@ public partial class DeckBuilderViewModel : ObservableObject
     public Card? commander { get; private set; }
     public int totalCards { get; private set; }
     
-    public DeckBuilderViewModel(ICardCacheService cardCacheService, IMoxfieldService moxfieldService, DecklistParser parser)
+    public DeckBuilderViewModel(ICardCacheService cardCacheService, IMoxfieldService moxfieldService, IComboFinderService comboFinderService, DecklistParser parser)
     {
         _cardCacheService = cardCacheService;
         _moxfieldService = moxfieldService;
+        _comboFinderService = comboFinderService;
         _parser = parser;
         _groupedCards = new ObservableCollection<CardTypeGroup>();
         _manaCurve = new ObservableCollection<ManaCurvePoint>();
@@ -89,6 +98,22 @@ public partial class DeckBuilderViewModel : ObservableObject
     {
         var card = await _cardCacheService.GetCardByName(_searchCard);
         ShowCardDetails(card);
+    }
+    
+    partial void OnSelectedCardChanged(Card? value)
+    {
+        UpdateSelectedCardInDeck();
+    }
+    
+    private void UpdateSelectedCardInDeck()
+    {
+        if (SelectedCard == null)
+        {
+            SelectedCardInDeck = null;
+            return;
+        }
+
+        SelectedCardInDeck = _cards.FirstOrDefault(dc => dc.card.name.Equals(SelectedCard.name, StringComparison.OrdinalIgnoreCase));
     }
 
     private void GroupCardsByType()
@@ -230,122 +255,55 @@ public partial class DeckBuilderViewModel : ObservableObject
         {
             commander = deckCard.card;
 
-            _moxfieldCommonCards = new();
-
-            var topDecks = await _moxfieldService.ExportTopDecksForCommander(commander.name);
-            List<Deck> parsedDecks = new();
-            foreach (var deck in topDecks)
-            {
-                parsedDecks.Add(_parser.ParseDeckList(deck));
-            }
-
-            var commonCards = FindCommonCards(parsedDecks);
-            foreach (var commonCard in commonCards)
-            {
-                if(commonCard.card.name is "Forest" or "Swamp" or "Island" or "Plains" or "Mountain") continue;
-                MoxfieldCommonCards.Add(commonCard);
-            }
-            
-            OnPropertyChanged(nameof(MoxfieldCommonCards));
+            _ = UpdateMoxfieldCommondCardsAndDecks(commander.name);
             
             OnPropertyChanged(nameof(commander));
-            
             await _cardCacheService.GetCard(deckCard.card);
         }
     }
 
-    [RelayCommand]
-    private void RemoveCard(DeckCard deckCard)
+    private async Task UpdateMoxfieldCommondCardsAndDecks(string commanderName)
     {
-        if (deckCard.Quantity > 1)
-        {
-            deckCard.Quantity--;
-        }
-        else
-        {
-            var group = _groupedCards.FirstOrDefault(g => g.cards.Contains(deckCard));
-            group?.cards.Remove(deckCard);
-            _cards.Remove(deckCard);
-        }
-        
-        totalCards = _cards.Sum(dc => dc.Quantity);
-        OnPropertyChanged(nameof(totalCards));
-        CalculateManaCurve();
-        
-        if (_groupedCards.Any(g => g.cards.Count == 0))
-        {
-            GroupCardsByType();
-        }
+        var decks = await _moxfieldService.ExportTopDecksForCommander(commander.name);
+        _ = UpdateCommonCards(decks);
+        _ = UpdateMoxfieldDecks(decks);
     }
 
     [RelayCommand]
-    private void IncreaseQuantity(DeckCard deckCard)
+    private async Task UpdateCombos()
     {
-        if (deckCard.card.type?.Contains("Land") == true)
+        var combos = _comboFinderService.FindCombosInDeck(_cards.Select(x => x.card).ToList());
+    }
+
+    private async Task UpdateCommonCards(List<MoxfieldDeck> decks)
+    {
+        _moxfieldCommonCards = new();
+        List<Deck> parsedDecks = new();
+        foreach (var deck in decks)
         {
-            deckCard.Quantity++;
-            totalCards++;
-            OnPropertyChanged(nameof(totalCards));
-            CalculateManaCurve();
+            parsedDecks.Add(_parser.ParseDeckList(deck.cards));
+        }
+
+        var commonCards = FindCommonCards(parsedDecks);
+        foreach (var commonCard in commonCards)
+        {
+            if(commonCard.card.name is "Forest" or "Swamp" or "Island" or "Plains" or "Mountain") continue;
+            MoxfieldCommonCards.Add(commonCard);
+        }
             
-            var group = _groupedCards.FirstOrDefault(g => g.cards.Contains(deckCard));
-            if (group != null)
-            {
-                group.count = group.cards.Sum(dc => dc.Quantity);
-            }
-        }
+        OnPropertyChanged(nameof(MoxfieldCommonCards));
     }
 
-    [RelayCommand]
-    private void DecreaseQuantity(DeckCard deckCard)
+    private async Task UpdateMoxfieldDecks(List<MoxfieldDeck> decks)
     {
-        if (deckCard.Quantity > 1)
+        _moxfieldBestDecks = new();
+
+        foreach (var deck in decks)
         {
-            deckCard.Quantity--;
-            totalCards--;
-            OnPropertyChanged(nameof(totalCards));
-            CalculateManaCurve();
-            
-            var group = _groupedCards.FirstOrDefault(g => g.cards.Contains(deckCard));
-            if (group != null)
-            {
-                group.count = group.cards.Sum(dc => dc.Quantity);
-            }
+            MoxfieldBestDecks.Add(deck);
         }
-    }
-    
-    [RelayCommand]
-    private async Task ShowCardDetails(DeckCard deckCard)
-    {
-        SelectedCard = deckCard.card;
-        IsCardPinned = false;
         
-        await _cardCacheService.GetCard(deckCard.card);
-    }
-    
-    private void ShowCardDetails(Card card)
-    {
-        SelectedCard = card;
-        IsCardPinned = false;
-    }
-
-    [RelayCommand]
-    private void PinCard()
-    {
-        IsCardPinned = true;
-    }
-
-    [RelayCommand]
-    private void CloseCard()
-    {
-        SelectedCard = null;
-        IsCardPinned = false;
-    }
-
-    [RelayCommand]
-    private void ToggleGroup(CardTypeGroup group)
-    {
-        group.IsExpanded = !group.IsExpanded;
+        OnPropertyChanged(nameof(MoxfieldBestDecks));
     }
     
     private IOrderedEnumerable<DeckCard> FindCommonCards(List<Deck> decks)
@@ -367,6 +325,221 @@ public partial class DeckBuilderViewModel : ObservableObject
             })
             .OrderByDescending(dc => dc.Quantity)
             .ThenBy(dc => dc.card.name);
+    }
+    
+    private async Task ShowCardDetails(Card card)
+    { 
+        var cardData = await _cardCacheService.GetCard(card);
+        
+        SelectedCard = cardData;
+        IsCardPinned = false;
+        
+        OnPropertyChanged(nameof(SelectedCard));
+    }
+
+    [RelayCommand]
+    private void RemoveCard(DeckCard deckCard)
+    {
+        var group = _groupedCards.FirstOrDefault(g => g.cards.Contains(deckCard));
+        group?.cards.Remove(deckCard);
+        _cards.Remove(deckCard);
+        
+        totalCards = _cards.Sum(dc => dc.Quantity);
+        OnPropertyChanged(nameof(totalCards));
+        CalculateManaCurve();
+        
+        if (_groupedCards.Any(g => g.cards.Count == 0))
+        {
+            GroupCardsByType();
+        }
+    }
+
+    [RelayCommand]
+    private void IncreaseQuantity(DeckCard deckCard)
+    {
+        deckCard.Quantity++;
+        totalCards++;
+        OnPropertyChanged(nameof(totalCards));
+        CalculateManaCurve();
+            
+        var group = _groupedCards.FirstOrDefault(g => g.cards.Contains(deckCard));
+        if (group != null)
+        {
+            group.count = group.cards.Sum(dc => dc.Quantity);
+            OnPropertyChanged(nameof(GroupedCards));
+        }
+        
+        UpdateSelectedCardInDeck();
+    }
+
+    [RelayCommand]
+    private void DecreaseQuantity(DeckCard deckCard)
+    {
+        if (deckCard.Quantity > 1)
+        {
+            deckCard.Quantity--;
+            totalCards--;
+            OnPropertyChanged(nameof(totalCards));
+            CalculateManaCurve();
+            
+            var group = _groupedCards.FirstOrDefault(g => g.cards.Contains(deckCard));
+            if (group != null)
+            {
+                group.count = group.cards.Sum(dc => dc.Quantity);
+                OnPropertyChanged(nameof(GroupedCards));
+            }
+        }
+        else
+        {
+            RemoveCard(deckCard);
+        }
+        
+        UpdateSelectedCardInDeck();
+    }
+    
+    [RelayCommand]
+    private async Task ShowCardDetails(DeckCard deckCard)
+    {
+        await ShowCardDetails(deckCard.card);
+    }
+
+    [RelayCommand]
+    private void PinCard()
+    {
+        IsCardPinned = true;
+    }
+
+    [RelayCommand]
+    private void CloseCard()
+    {
+        SelectedCard = null;
+        IsCardPinned = false;
+    }
+
+    [RelayCommand]
+    private void OpenMoxfieldDeck(string link)
+    {
+        Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
+    }
+
+    [RelayCommand]
+    private void ToggleGroup(CardTypeGroup group)
+    {
+        group.IsExpanded = !group.IsExpanded;
+    }
+    
+    [RelayCommand]
+    private async Task AddCardToDeck(Card card)
+    {
+        if (card == null) return;
+
+        var existingCard = _cards.FirstOrDefault(dc => dc.card.name.Equals(card.name, StringComparison.OrdinalIgnoreCase));
+        
+        if (existingCard != null)
+        {
+            // Card already in deck, increase quantity
+            if (card.type?.Contains("Land") == true || existingCard.Quantity < 1)
+            {
+                existingCard.Quantity++;
+                totalCards++;
+                
+                // Update the group count
+                var group = _groupedCards.FirstOrDefault(g => g.cards.Contains(existingCard));
+                if (group != null)
+                {
+                    group.count = group.cards.Sum(dc => dc.Quantity);
+                }
+            }
+        }
+        else
+        {
+            // New card, add to deck
+            var fetchedCard = await _cardCacheService.GetCardByName(card.name);
+            if (fetchedCard != null)
+            {
+                var newDeckCard = new DeckCard
+                {
+                    card = fetchedCard,
+                    Quantity = 1
+                };
+                
+                _cards.Add(newDeckCard);
+                totalCards++;
+                
+                // Regroup cards to place new card in correct category
+                GroupCardsByType();
+            }
+        }
+        
+        OnPropertyChanged(nameof(totalCards));
+        CalculateManaCurve();
+        UpdateSelectedCardInDeck();
+    }
+
+    [RelayCommand]
+    private void RemoveOneCardFromDeck(Card card)
+    {
+        if (card == null) return;
+
+        var existingCard = _cards.FirstOrDefault(dc => dc.card.name.Equals(card.name, StringComparison.OrdinalIgnoreCase));
+        if (existingCard == null) return;
+
+        if (existingCard.Quantity > 1)
+        {
+            existingCard.Quantity--;
+            totalCards--;
+            
+            // Update the group count
+            var group = _groupedCards.FirstOrDefault(g => g.cards.Contains(existingCard));
+            if (group != null)
+            {
+                group.count = group.cards.Sum(dc => dc.Quantity);
+            }
+        }
+        else
+        {
+            // Remove the card completely
+            var group = _groupedCards.FirstOrDefault(g => g.cards.Contains(existingCard));
+            group?.cards.Remove(existingCard);
+            _cards.Remove(existingCard);
+            totalCards--;
+            
+            // Clean up empty groups
+            if (_groupedCards.Any(g => g.cards.Count == 0))
+            {
+                GroupCardsByType();
+            }
+        }
+        
+        OnPropertyChanged(nameof(totalCards));
+        CalculateManaCurve();
+        UpdateSelectedCardInDeck();
+    }
+
+    [RelayCommand]
+    private void RemoveAllCopiesFromDeck(Card card)
+    {
+        if (card == null) return;
+
+        var existingCard = _cards.FirstOrDefault(dc => dc.card.name.Equals(card.name, StringComparison.OrdinalIgnoreCase));
+        if (existingCard == null) return;
+
+        totalCards -= existingCard.Quantity;
+        
+        // Remove from group and deck
+        var group = _groupedCards.FirstOrDefault(g => g.cards.Contains(existingCard));
+        group?.cards.Remove(existingCard);
+        _cards.Remove(existingCard);
+        
+        // Clean up empty groups
+        if (_groupedCards.Any(g => g.cards.Count == 0))
+        {
+            GroupCardsByType();
+        }
+        
+        OnPropertyChanged(nameof(totalCards));
+        CalculateManaCurve();
+        UpdateSelectedCardInDeck();
     }
 }
 

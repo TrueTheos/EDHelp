@@ -188,7 +188,7 @@ public class MoxfieldService : IDisposable, IMoxfieldService
         }
     }
 
-    public async Task<List<List<string>>> ExportTopDecksForCommander(string cardName, int topCount = 5)
+    public async Task<List<MoxfieldDeck>> ExportTopDecksForCommander(string cardName, int topCount = 5)
     {
         try
         {
@@ -198,28 +198,28 @@ public class MoxfieldService : IDisposable, IMoxfieldService
             if (string.IsNullOrEmpty(cardId))
             {
                 Console.WriteLine($"Card ID not found for '{cardName}'. Aborting export.");
-                return new List<List<string>>();
+                return new List<MoxfieldDeck>();
             }
         
             var deckResults = await SearchForDecks(cardId, cardName);
             if (deckResults.Count == 0)
             {
                 Console.WriteLine("No decks found for this commander.");
-                return new List<List<string>>();
+                return new List<MoxfieldDeck>();
             }
         
             var topDecks = deckResults.Take(topCount).ToList();
-            var exportedDecks = new List<List<string>>();
+            var exportedDecks = new List<MoxfieldDeck>();
         
             foreach (var deck in topDecks)
             {
-                var deckCardNames = await ExportDeckCardNames(deck);
-                if (deckCardNames != null && deckCardNames.Count > 0)
+                var moxfieldDeck = await ExportDeck(deck);
+                if (moxfieldDeck != null && moxfieldDeck.cards.Count > 0)
                 {
-                    exportedDecks.Add(deckCardNames);
+                    exportedDecks.Add(moxfieldDeck);
                 }
             
-                await Task.Delay(new Random().Next(1000, 2000));
+                await Task.Delay(1000);
             }
         
             return exportedDecks;
@@ -227,14 +227,16 @@ public class MoxfieldService : IDisposable, IMoxfieldService
         catch (Exception ex)
         {
             Console.WriteLine($"Error in ExportTopDecksForCommander: {ex.Message}");
-            return new List<List<string>>();
+            return new List<MoxfieldDeck>();
         }
     }
     
-    private async Task<List<string>> ExportDeckCardNames(MoxfieldDeckSearchResult deck)
+    private async Task<MoxfieldDeck> ExportDeck(MoxfieldDeckSearchResult deck)
     {
         try
         {
+            
+            
             var deckId = ExtractDeckIdFromUrl(deck.link);
             if (string.IsNullOrEmpty(deckId))
             {
@@ -253,9 +255,10 @@ public class MoxfieldService : IDisposable, IMoxfieldService
                 return null;
             }
         
-            var cardNames = ExtractCardNamesFromDeckJson(jsonContent);
-        
-            return cardNames;
+            return new MoxfieldDeck() {
+                name = deck.name,
+                link = deck.link, 
+                cards = ExtractCardNamesFromDeckJson(jsonContent)};
         }
         catch (Exception ex)
         {
@@ -397,9 +400,8 @@ public class MoxfieldService : IDisposable, IMoxfieldService
                     results.Add(new MoxfieldDeckSearchResult
                     {
                         name = deck.name,
-                        views = deck.viewCount,
-                        likes = deck.likeCount,
-                        link = deck.publicUrl
+                        viewCount = deck.viewCount,
+                        link = deck.link
                     });
                 }
             }

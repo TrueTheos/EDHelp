@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
 namespace EDHelp.Models;
@@ -17,26 +18,21 @@ public class MoxfieldCardData
     
 public class MoxfieldDeckSearchResponse
 {
-    public List<MoxfieldDeckData> data { get; set; }
+    public List<MoxfieldDeckSearchResult> data { get; set; }
         
-    public int totalResults { get; set; }
-}
-    
-public class MoxfieldDeckData
-{
-    public string name { get; set; }
-        
-    public int viewCount { get; set; }
-        
-    public int likeCount { get; set; }
-        
-    public string publicUrl { get; set; }
 }
     
 public class MoxfieldDeckSearchResult
 {
     public string name { get; set; }
-    public int views { get; set; }
-    public int likes { get; set; }
+    public int viewCount { get; set; }
+    [JsonProperty(PropertyName = "publicUrl")]
     public string link { get; set; }
+}
+
+public class MoxfieldDeck
+{
+    public string name { get; set; }
+    public string link { get; set; }
+    public List<string> cards { get; set; }
 }
