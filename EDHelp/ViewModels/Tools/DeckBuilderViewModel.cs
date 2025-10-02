@@ -9,13 +9,15 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Dock.Model.Core;
+using Dock.Model.Mvvm.Controls;
 using EDHelp.Models;
 using EDHelp.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EDHelp.ViewModels;
 
-public partial class DeckBuilderViewModel : ObservableObject
+public partial class DeckBuilderViewModel : Tool
 {
     private readonly ICardCacheService _cardCacheService;
     private readonly IMoxfieldService _moxfieldService;

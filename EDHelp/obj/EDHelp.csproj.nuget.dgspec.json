@@ -46,27 +46,39 @@
           "dependencies": {
             "Avalonia": {
               "target": "Package",
-              "version": "[11.3.4, )"
+              "version": "[11.3.6, )"
             },
             "Avalonia.Desktop": {
               "target": "Package",
-              "version": "[11.3.4, )"
+              "version": "[11.3.6, )"
             },
             "Avalonia.Diagnostics": {
               "target": "Package",
-              "version": "[11.3.4, )"
+              "version": "[11.3.6, )"
             },
             "Avalonia.Fonts.Inter": {
               "target": "Package",
-              "version": "[11.3.4, )"
+              "version": "[11.3.6, )"
             },
             "Avalonia.Themes.Fluent": {
               "target": "Package",
-              "version": "[11.3.4, )"
+              "version": "[11.3.6, )"
             },
             "CommunityToolkit.Mvvm": {
               "target": "Package",
-              "version": "[8.2.1, )"
+              "version": "[8.4.0, )"
+            },
+            "Dock.Avalonia": {
+              "target": "Package",
+              "version": "[11.3.6.1, )"
+            },
+            "Dock.Avalonia.Themes.Fluent": {
+              "target": "Package",
+              "version": "[11.3.6.1, )"
+            },
+            "Dock.Model.Mvvm": {
+              "target": "Package",
+              "version": "[11.3.6.1, )"
             },
             "FuzzySharp": {
               "target": "Package",
@@ -83,6 +95,12 @@
             "Selenium.WebDriver": {
               "target": "Package",
               "version": "[4.35.0, )"
+            },
+            "StaticViewLocator": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[0.1.0, )"
             }
           },
           "imports": [

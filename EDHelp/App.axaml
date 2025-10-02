@@ -2,11 +2,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="EDHelp.App"
              RequestedThemeVariant="Dark"
-             xmlns:converters="clr-namespace:EDHelp.Converters">
+             xmlns:converters="clr-namespace:EDHelp.Converters"
+             xmlns:edHelp="clr-namespace:EDHelp">
 
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>
+    
+    <Application.DataTemplates>
+        <edHelp:ViewLocator/>
+    </Application.DataTemplates>
     
     <Application.Resources>
         <ResourceDictionary>

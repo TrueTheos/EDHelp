@@ -9,6 +9,7 @@ using Avalonia.Markup.Xaml;
 using EDHelp.Controls;
 using EDHelp.Services;
 using EDHelp.ViewModels;
+using EDHelp.ViewModels.Tools;
 using EDHelp.Views;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -34,7 +35,7 @@ public partial class App : Application
             var parser = serviceProvider.GetRequiredService<DecklistParser>();
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(cardCacheService, parser),
+                DataContext = new MainWindowViewModel(cardCacheService, parser, serviceProvider),
             };
         }
 
@@ -63,6 +64,7 @@ public partial class App : Application
         collection.AddSingleton<IComboFinderService, ComboFinderService>();
 
         collection.AddSingleton<DeckBuilderViewModel>();
+        collection.AddSingleton<CardInfoToolViewModel>();
         collection.AddSingleton<MainWindowViewModel>();
         collection.AddSingleton<CachedCardImage>();
         
