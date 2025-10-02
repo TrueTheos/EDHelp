@@ -42,6 +42,12 @@ public partial class DeckBuilderViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _isCardPinned;
+
+    [ObservableProperty]
+    private bool _isLoading;
+    
+    [ObservableProperty]
+    private bool _isCommanderStaplesLoading;
     
     private CancellationTokenSource? _currentSearchCts;
     private readonly SemaphoreSlim _searchSemaphore = new(1, 1);
@@ -264,9 +270,17 @@ public partial class DeckBuilderViewModel : ObservableObject
 
     private async Task UpdateMoxfieldCommondCardsAndDecks(string commanderName)
     {
-        var decks = await _moxfieldService.ExportTopDecksForCommander(commander.name);
-        _ = UpdateCommonCards(decks);
-        _ = UpdateMoxfieldDecks(decks);
+        IsCommanderStaplesLoading = true;
+        try
+        {
+            var decks = await _moxfieldService.ExportTopDecksForCommander(commander.name);
+            _ = UpdateCommonCards(decks);
+            _ = UpdateMoxfieldDecks(decks);
+        }
+        finally
+        {
+            IsCommanderStaplesLoading = false;
+        }
     }
 
     [RelayCommand]

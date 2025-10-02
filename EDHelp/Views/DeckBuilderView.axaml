@@ -18,6 +18,7 @@
     </UserControl.Resources>
     
     <Grid>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -461,6 +462,11 @@
                                            VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
+                        
+                        <ProgressBar IsIndeterminate="True" 
+                                     IsVisible="{Binding IsCommanderStaplesLoading}" 
+                                     VerticalAlignment="Center" 
+                                     HorizontalAlignment="Center"/>
                     </Grid>
                 </Grid>
             </Border>
