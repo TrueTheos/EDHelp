@@ -1,0 +1,28 @@
+# Build results
+bin/
+obj/
+out/
+[Bb]uild/
+[Ll]og/
+[Tt]emp/
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Visual Studio artifacts (if any)
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Others
+*.vs/
+.vscode/
