@@ -35,7 +35,7 @@ public partial class App : Application
             var parser = serviceProvider.GetRequiredService<DecklistParser>();
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(cardCacheService, parser, serviceProvider),
+                DataContext = new MainWindowViewModel(serviceProvider, parser),
             };
         }
 

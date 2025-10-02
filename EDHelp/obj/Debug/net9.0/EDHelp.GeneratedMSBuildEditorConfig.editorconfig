@@ -38,5 +38,17 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 [C:/Dev/Personal/Software/EDHelp/EDHelp/Views/DeckBuilderView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[C:/Dev/Personal/Software/EDHelp/EDHelp/Views/DockableOptionsView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Dev/Personal/Software/EDHelp/EDHelp/Views/Documents/DocumentView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Dev/Personal/Software/EDHelp/EDHelp/Views/MainView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [C:/Dev/Personal/Software/EDHelp/EDHelp/Views/MainWindow.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Dev/Personal/Software/EDHelp/EDHelp/Views/Tools/CardInfoToolView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

@@ -80,6 +80,10 @@
               "target": "Package",
               "version": "[11.3.6.1, )"
             },
+            "Dock.Serializer": {
+              "target": "Package",
+              "version": "[11.3.0.12, )"
+            },
             "FuzzySharp": {
               "target": "Package",
               "version": "[2.0.2, )"

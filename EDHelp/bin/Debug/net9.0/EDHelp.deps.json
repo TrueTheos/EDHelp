@@ -17,6 +17,7 @@
           "Dock.Avalonia": "11.3.6.1",
           "Dock.Avalonia.Themes.Fluent": "11.3.6.1",
           "Dock.Model.Mvvm": "11.3.6.1",
+          "Dock.Serializer": "11.3.0.12",
           "FuzzySharp": "2.0.2",
           "Microsoft.Extensions.DependencyInjection": "10.0.0-rc.1.25451.107",
           "Newtonsoft.Json": "13.0.4",
@@ -355,6 +356,18 @@
           "lib/net8.0/Dock.Model.Mvvm.dll": {
             "assemblyVersion": "11.3.6.1",
             "fileVersion": "11.3.6.1"
+          }
+        }
+      },
+      "Dock.Serializer/11.3.0.12": {
+        "dependencies": {
+          "Dock.Model": "11.3.6.1",
+          "Newtonsoft.Json": "13.0.4"
+        },
+        "runtime": {
+          "lib/net8.0/Dock.Serializer.dll": {
+            "assemblyVersion": "11.3.0.12",
+            "fileVersion": "11.3.0.12"
           }
         }
       },
@@ -794,6 +807,13 @@
       "sha512": "sha512-PaknVFZuwAghcxGN9jBIPu5jAKxqNO8GN2FltzLzdohVqpv/nanoiPoLSSQncQqVN2O2VsqyV1XTCG9yfd7RNA==",
       "path": "dock.model.mvvm/11.3.6.1",
       "hashPath": "dock.model.mvvm.11.3.6.1.nupkg.sha512"
+    },
+    "Dock.Serializer/11.3.0.12": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-xpLvc4vCtqxiCH1U/KDPBCJKi8wqG40fgCuB5tcfx9g70y/8/+RoPLmSG9zGc9j8RgA4SsCYpPeIN2pOuA4MFA==",
+      "path": "dock.serializer/11.3.0.12",
+      "hashPath": "dock.serializer.11.3.0.12.nupkg.sha512"
     },
     "Dock.Settings/11.3.6.1": {
       "type": "package",

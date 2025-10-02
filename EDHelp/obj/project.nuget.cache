@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "BV83Em9ZPCE=",
+  "dgSpecHash": "l9vwL5pFryM=",
   "success": true,
   "projectFilePath": "C:\\Dev\\Personal\\Software\\EDHelp\\EDHelp\\EDHelp.csproj",
   "expectedPackageFiles": [
@@ -28,6 +28,7 @@
     "C:\\Users\\loiuy\\.nuget\\packages\\dock.markupextension\\11.3.6.1\\dock.markupextension.11.3.6.1.nupkg.sha512",
     "C:\\Users\\loiuy\\.nuget\\packages\\dock.model\\11.3.6.1\\dock.model.11.3.6.1.nupkg.sha512",
     "C:\\Users\\loiuy\\.nuget\\packages\\dock.model.mvvm\\11.3.6.1\\dock.model.mvvm.11.3.6.1.nupkg.sha512",
+    "C:\\Users\\loiuy\\.nuget\\packages\\dock.serializer\\11.3.0.12\\dock.serializer.11.3.0.12.nupkg.sha512",
     "C:\\Users\\loiuy\\.nuget\\packages\\dock.settings\\11.3.6.1\\dock.settings.11.3.6.1.nupkg.sha512",
     "C:\\Users\\loiuy\\.nuget\\packages\\fuzzysharp\\2.0.2\\fuzzysharp.2.0.2.nupkg.sha512",
     "C:\\Users\\loiuy\\.nuget\\packages\\harfbuzzsharp\\8.3.1.1\\harfbuzzsharp.8.3.1.1.nupkg.sha512",

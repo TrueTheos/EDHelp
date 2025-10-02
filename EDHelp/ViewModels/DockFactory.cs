@@ -18,21 +18,21 @@ namespace EDHelp.ViewModels;
 
 public class DockFactory : Factory
 {
-    private readonly object _context;
     private IRootDock? _rootDock;
     private IDocumentDock? _documentDock;
     private IServiceProvider _serviceProvider;
     
-    public DockFactory(object context, IServiceProvider provider)
+    public DockFactory( IServiceProvider provider)
     {
         _serviceProvider = provider;
-        _context = context;
     }
     
     public override IDocumentDock CreateDocumentDock() => new CustomDocumentDock();
 
     public override IRootDock CreateLayout()
     {
+        var document1 = new DocumentViewModel {Id = "Document1", Title = "Document1"};
+        
         var deckBuilderView = _serviceProvider.GetRequiredService<DeckBuilderViewModel>();
         deckBuilderView.Id = "DeckBuilder";
         deckBuilderView.Title = "DeckBuilder";
@@ -41,42 +41,95 @@ public class DockFactory : Factory
         cardInfoTool.Id = "CardInfoTool";
         cardInfoTool.Title = "Card Info";
 
+        var toolsList = new List<IDockable> { cardInfoTool };
+
+        var rightDock = new ToolDock()
+        {
+            Proportion = 0.25,
+            ActiveDockable = toolsList.FirstOrDefault(),
+            VisibleDockables = CreateList<IDockable>(toolsList.ToArray()),
+        };
+        
+        var documentDock = new CustomDocumentDock
+        {
+            // DockGroup = "CustomDocumentDock",
+            IsCollapsable = false,
+            ActiveDockable = document1,
+            VisibleDockables = CreateList<IDockable>(document1),
+            CanCreateDocument = true,
+            // CanDrop = false,
+            EnableWindowDrag = true,
+            // CanCloseLastDockable = false,
+        };
+        
+        var mainLayout = new ProportionalDock
+        {
+            // EnableGlobalDocking = false,
+            Orientation = Orientation.Horizontal,
+            VisibleDockables = CreateList<IDockable>
+            (
+                rightDock,
+                new ProportionalDockSplitter { ResizePreview = true },
+                documentDock
+            )
+        };
+
+        deckBuilderView.ActiveDockable = mainLayout;
+        deckBuilderView.VisibleDockables = CreateList<IDockable>(mainLayout);
+
         var rootDock = CreateRootDock();
 
-        rootDock.VisibleDockables = CreateList<IDockable>(deckBuilderView);
-        rootDock.ActiveDockable = deckBuilderView;
+        rootDock.IsCollapsable = false;
         rootDock.DefaultDockable = deckBuilderView;
+        rootDock.VisibleDockables = CreateList<IDockable>(deckBuilderView);
+
+        rootDock.LeftPinnedDockables = CreateList<IDockable>();
+        rootDock.RightPinnedDockables = CreateList<IDockable>();
+        rootDock.TopPinnedDockables = CreateList<IDockable>();
+        rootDock.BottomPinnedDockables = CreateList<IDockable>();
+
+        rootDock.PinnedDock = null;
+
+        _documentDock = documentDock;
+        _rootDock = rootDock;
             
         return rootDock;
+    }
+    
+    public override IDockWindow? CreateWindowFrom(IDockable dockable)
+    {
+        var window = base.CreateWindowFrom(dockable);
+
+        if (window != null)
+        {
+            window.Title = "EDHelp";
+        }
+        return window;
     }
 
     public override void InitLayout(IDockable layout)
     {
-        DockableLocator = new Dictionary<string, Func<IDockable?>>
+        var contextLocator = new Dictionary<string, Func<object?>>
         {
-            ["DeckBuilder"] = () =>
-            {
-                var vm = _serviceProvider.GetRequiredService<DeckBuilderViewModel>();
-                vm.Id = "DeckBuilder";
-                vm.Title = "DeckBuilder";
-                return vm;
-            },
-            ["CardInfoTool"] = () =>
-            {
-                var vm = _serviceProvider.GetRequiredService<CardInfoToolViewModel>();
-                vm.Id = "CardInfoTool";
-                vm.Title = "Card Info";
-                return vm;
-            }
+            ["Document1"] = () => new DemoDocument(),
+            ["CardInfoTool"] = () => new CardInfoToolModel(),
+            ["DeckBuilder"] = () => _serviceProvider.GetRequiredService<DeckBuilderViewModel>()
         };
+        
+        ContextLocator = contextLocator;
 
-        ContextLocator = new Dictionary<string, Func<object?>>
+        var dockableLocator = new Dictionary<string, Func<IDockable?>>()
         {
-            ["DeckBuilder"] = () => _serviceProvider.GetService(typeof(DemoData)),
-            ["CardInfoTool"] = () => _serviceProvider.GetService(typeof(DemoData))
+            ["Root"] = () => _rootDock,
+            ["Documents"] = () => _documentDock
         };
+        
+        DockableLocator = dockableLocator;
 
-        DefaultContextLocator = () => _serviceProvider.GetService(typeof(DemoData));
+        HostWindowLocator = new Dictionary<string, Func<IHostWindow?>>
+        {
+            [nameof(IDockWindow)] = () => new HostWindow()
+        };
 
         base.InitLayout(layout);
     }

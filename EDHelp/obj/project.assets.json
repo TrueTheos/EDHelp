@@ -474,6 +474,23 @@
           }
         }
       },
+      "Dock.Serializer/11.3.0.12": {
+        "type": "package",
+        "dependencies": {
+          "Dock.Model": "11.3.0.12",
+          "Newtonsoft.Json": "13.0.3"
+        },
+        "compile": {
+          "lib/net8.0/Dock.Serializer.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Dock.Serializer.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Dock.Settings/11.3.6.1": {
         "type": "package",
         "dependencies": {
@@ -1446,6 +1463,23 @@
         "lib/netstandard2.0/Dock.Model.Mvvm.xml"
       ]
     },
+    "Dock.Serializer/11.3.0.12": {
+      "sha512": "xpLvc4vCtqxiCH1U/KDPBCJKi8wqG40fgCuB5tcfx9g70y/8/+RoPLmSG9zGc9j8RgA4SsCYpPeIN2pOuA4MFA==",
+      "type": "package",
+      "path": "dock.serializer/11.3.0.12",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "dock.serializer.11.3.0.12.nupkg.sha512",
+        "dock.serializer.nuspec",
+        "lib/net6.0/Dock.Serializer.dll",
+        "lib/net6.0/Dock.Serializer.xml",
+        "lib/net8.0/Dock.Serializer.dll",
+        "lib/net8.0/Dock.Serializer.xml",
+        "lib/netstandard2.0/Dock.Serializer.dll",
+        "lib/netstandard2.0/Dock.Serializer.xml"
+      ]
+    },
     "Dock.Settings/11.3.6.1": {
       "sha512": "EStWJS7KacbhFLW+6S1Gco7PIi8+7r82gmRSUbzAlRPSCrj+uHNd8mmkCVoznVfMpgzoyZKBm8DwdY0hpLd8YQ==",
       "type": "package",
@@ -2014,6 +2048,7 @@
       "Dock.Avalonia >= 11.3.6.1",
       "Dock.Avalonia.Themes.Fluent >= 11.3.6.1",
       "Dock.Model.Mvvm >= 11.3.6.1",
+      "Dock.Serializer >= 11.3.0.12",
       "FuzzySharp >= 2.0.2",
       "Microsoft.Extensions.DependencyInjection >= 10.0.0-rc.1.25451.107",
       "Newtonsoft.Json >= 13.0.4",
@@ -2099,6 +2134,10 @@
           "Dock.Model.Mvvm": {
             "target": "Package",
             "version": "[11.3.6.1, )"
+          },
+          "Dock.Serializer": {
+            "target": "Package",
+            "version": "[11.3.0.12, )"
           },
           "FuzzySharp": {
             "target": "Package",

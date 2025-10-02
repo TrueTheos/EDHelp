@@ -17,7 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EDHelp.ViewModels;
 
-public partial class DeckBuilderViewModel : Tool
+public partial class DeckBuilderViewModel : RootDock
 {
     private readonly ICardCacheService _cardCacheService;
     private readonly IMoxfieldService _moxfieldService;

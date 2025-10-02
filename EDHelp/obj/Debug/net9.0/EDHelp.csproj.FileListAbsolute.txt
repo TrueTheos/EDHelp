@@ -90,3 +90,4 @@ C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\Dock.MarkupExtension.dll
 C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\Dock.Model.dll
 C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\Dock.Model.Mvvm.dll
 C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\Dock.Settings.dll
+C:\Dev\Personal\Software\EDHelp\EDHelp\bin\Debug\net9.0\Dock.Serializer.dll

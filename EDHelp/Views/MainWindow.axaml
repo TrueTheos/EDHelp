@@ -1,59 +1,55 @@
-<Window xmlns="https://github.com/avaloniaui"
+<Window x:Class="EDHelp.Views.MainWindow"
+        xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:vm="using:EDHelp.ViewModels"
         xmlns:views="using:EDHelp.Views"
-        xmlns:dock="using:Dock.Avalonia.Controls"
-        x:Class="EDHelp.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Title="EDH Deck Builder"
-        Width="1080" Height="720"
-        WindowStartupLocation="CenterScreen"
-        DragDrop.AllowDrop="True">
-
+        mc:Ignorable="d"
+        d:DesignWidth="1200" d:DesignHeight="680"
+        x:DataType="vm:MainWindowViewModel" x:CompileBindings="True"
+        x:Name="MainWindowView"
+        UseLayoutRounding="True" RenderOptions.BitmapInterpolationMode="HighQuality"
+        WindowState="Normal" WindowStartupLocation="CenterScreen"
+        Background="{x:Null}"
+        TransparencyLevelHint="AcrylicBlur"
+        Foreground="{DynamicResource DockThemeForegroundBrush}"
+        BorderThickness="1" BorderBrush="{DynamicResource DockThemeBorderLowBrush}"
+        FontFamily="Segoe UI, SF Pro Display, Noto Sans, Cantarel"
+        Title="Dock Avalonia Demo" Height="680" Width="1200"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="PreferSystemChrome">
+    <Window.Resources>
+        <ExperimentalAcrylicMaterial BackgroundSource="Digger"
+                                     TintColor="{DynamicResource SystemAltHighColor}"
+                                     TintOpacity="1"
+                                     FallbackColor="{DynamicResource AcrylicFallbackColor}"
+                                     MaterialOpacity="0.55"
+                                     x:Key="AcrylicMaterial"/>
+    </Window.Resources>
     <Design.DataContext>
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
-
-    <Grid>
-        <!-- Import View -->
-        <Border x:Name="ImportView"
-                IsVisible="{Binding ShowImportView}"
-                Background="#1e1e1e"
-                BorderBrush="#404040"
-                BorderThickness="2"
-                CornerRadius="8"
-                Margin="50">
-            
-            <Border.Styles>
-                <Style Selector="Border.dragover">
-                    <Setter Property="BorderBrush" Value="#0078d4"/>
-                    <Setter Property="Background" Value="#0078d420"/>
-                </Style>
-            </Border.Styles>
-            
-            <StackPanel HorizontalAlignment="Center" 
-                       VerticalAlignment="Center"
-                       Spacing="20">
-                
-                <TextBlock Text="📋" FontSize="72" HorizontalAlignment="Center"/>
-                
-                <TextBlock Text="{Binding DragText}"
-                          FontSize="18"
-                          Foreground="#cccccc"
-                          HorizontalAlignment="Center"
-                          TextWrapping="Wrap"
-                          MaxWidth="400"/>
-                
-                <Button Content="Or Browse for File"
-                       HorizontalAlignment="Center"
-                       Padding="20,10"
-                       Click="BrowseFile_Click"/>
-                
-            </StackPanel>
-        </Border>
-
-        <dock:DockControl IsVisible="{Binding !ShowImportView}"
-                         Layout="{Binding CurrentView}">
-        </dock:DockControl>
-    </Grid>
+    <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False" Material="{StaticResource AcrylicMaterial}" />
+        <Panel Margin="{Binding #MainWindowView.OffScreenMargin}">
+            <Panel Margin="{Binding #MainWindowView.WindowDecorationMargin}">
+                <views:MainView>
+                    <views:MainView.Styles>
+                        <Style Selector="GridSplitter">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Border Background="Transparent">
+                                            <ExperimentalAcrylicBorder Material="{StaticResource AcrylicMaterial}" />
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </views:MainView.Styles>
+                </views:MainView>
+            </Panel>
+        </Panel>
+    </Panel>
 </Window>

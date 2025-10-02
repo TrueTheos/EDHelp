@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Dock.Model.Controls;
 using Dock.Model.Core;
+using EDHelp.Models;
 using EDHelp.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,44 +15,78 @@ namespace EDHelp.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    private readonly DecklistParser _parser;
-    private readonly ICardCacheService _cardCacheService;
+    private readonly IFactory? _factory;
+    private IRootDock? _layout;
     private readonly IServiceProvider _serviceProvider;
+    private readonly DecklistParser _parser;
 
-    [ObservableProperty]
-    private bool _isDragOver;
-
-    [ObservableProperty]
-    private string _dragText = "Drag a decklist (.txt) file here to import";
-
-    [ObservableProperty]
-    private bool _showImportView = true;
-
-    [ObservableProperty]
-    private IDockable? _currentView;
-
-    private DockFactory? _factory;
-
-    public DockFactory Factory
+    public IRootDock? Layout
     {
-        get
+        get => _layout;
+        set => SetProperty(ref _layout, value);
+    }
+
+    public ICommand NewLayout { get; }
+
+    public MainWindowViewModel(IServiceProvider serviceProvider, DecklistParser decklistParser)
+    {
+        _serviceProvider = serviceProvider;
+        _factory = new DockFactory(_serviceProvider);
+        
+        DebugFactoryEvents(_factory);
+
+        var layout = _factory?.CreateLayout();
+        if (layout is not null)
         {
-            if (_factory == null)
+            _factory?.InitLayout(layout);
+        }
+        Layout = layout;
+
+        if (Layout is { } root)
+        {
+            root.Navigate.Execute("DeckBuilder");
+        }
+
+        NewLayout = new RelayCommand(ResetLayout);
+    }
+
+    public void InitLayout()
+    {
+        if (Layout is null)
+        {
+            return;
+        }
+
+        _factory?.InitLayout(Layout);
+    }
+
+    public void CloseLayout()
+    {
+        if (Layout is IDock dock)
+        {
+            if (dock.Close.CanExecute(null))
             {
-                _factory = new DockFactory(this, _serviceProvider);
-                var layout = _factory.CreateLayout();
-                _factory.InitLayout(layout);
-                CurrentView = layout;
+                dock.Close.Execute(null);
             }
-            return _factory;
         }
     }
 
-    public MainWindowViewModel(ICardCacheService cardCacheService, DecklistParser parser, IServiceProvider serviceProvider)
+    public void ResetLayout()
     {
-        _parser = parser;
-        _cardCacheService = cardCacheService;
-        _serviceProvider = serviceProvider;
+        if (Layout is not null)
+        {
+            if (Layout.Close.CanExecute(null))
+            {
+                Layout.Close.Execute(null);
+            }
+        }
+
+        var layout = _factory?.CreateLayout();
+        if (layout is not null)
+        {
+            _factory?.InitLayout(layout);
+            Layout = layout;
+        }
     }
 
     [RelayCommand]
@@ -57,29 +94,140 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            DragText = "Importing deck...";
             var deck = _parser.ParseDecklistFromFile(filePath);
 
-            // Initialize factory and get the DeckBuilder
-            var factory = Factory; // This will create the factory if not already created
             var deckBuilder = _serviceProvider.GetRequiredService<DeckBuilderViewModel>();
             deckBuilder.InitDeck(deck);
-
-            // Navigate to the deck builder view
-            ShowImportView = false;
         }
         catch (Exception ex)
         {
-            DragText = $"Error importing deck: {ex.Message}";
-            await Task.Delay(3000);
-            DragText = "Drag a decklist (.txt) file here to import";
+            Console.WriteLine($"Error importing deck: {ex.Message}");
         }
     }
-
-    [RelayCommand]
-    private void NavigateToDeckBuilder()
+    
+    private void DebugFactoryEvents(IFactory factory)
     {
-        ShowImportView = false;
-        _ = Factory; // Ensure factory is initialized
+        factory.ActiveDockableChanged += (_, args) =>
+        {
+            Debug.WriteLine($"[ActiveDockableChanged] Title='{args.Dockable?.Title}'");
+        };
+
+        factory.FocusedDockableChanged += (_, args) =>
+        {
+            Debug.WriteLine($"[FocusedDockableChanged] Title='{args.Dockable?.Title}'");
+        };
+
+        factory.DockableAdded += (_, args) =>
+        {
+            Debug.WriteLine($"[DockableAdded] Title='{args.Dockable?.Title}'");
+        };
+
+        factory.DockableRemoved += (_, args) =>
+        {
+            Debug.WriteLine($"[DockableRemoved] Title='{args.Dockable?.Title}'");
+        };
+
+        factory.DockableClosed += (_, args) =>
+        {
+            Debug.WriteLine($"[DockableClosed] Title='{args.Dockable?.Title}'");
+        };
+
+        factory.DockableMoved += (_, args) =>
+        {
+            Debug.WriteLine($"[DockableMoved] Title='{args.Dockable?.Title}'");
+        };
+
+        factory.DockableDocked += (_, args) =>
+        {
+            Debug.WriteLine($"[DockableDocked] Title='{args.Dockable?.Title}', Operation='{args.Operation}'");
+        };
+
+        factory.DockableUndocked += (_, args) =>
+        {
+            Debug.WriteLine($"[DockableUndocked] Title='{args.Dockable?.Title}', Operation='{args.Operation}'");
+        };
+
+        factory.DockableSwapped += (_, args) =>
+        {
+            Debug.WriteLine($"[DockableSwapped] Title='{args.Dockable?.Title}'");
+        };
+
+        factory.DockablePinned += (_, args) =>
+        {
+            Debug.WriteLine($"[DockablePinned] Title='{args.Dockable?.Title}'");
+        };
+
+        factory.DockableUnpinned += (_, args) =>
+        {
+            Debug.WriteLine($"[DockableUnpinned] Title='{args.Dockable?.Title}'");
+        };
+
+        factory.WindowOpened += (_, args) =>
+        {
+            Debug.WriteLine($"[WindowOpened] Title='{args.Window?.Title}'");
+        };
+
+        factory.WindowClosed += (_, args) =>
+        {
+            Debug.WriteLine($"[WindowClosed] Title='{args.Window?.Title}'");
+        };
+
+        factory.WindowClosing += (_, args) =>
+        {
+            // NOTE: Set to True to cancel window closing.
+#if false
+                args.Cancel = true;
+#endif
+            Debug.WriteLine($"[WindowClosing] Title='{args.Window?.Title}', Cancel={args.Cancel}");
+        };
+
+        factory.WindowAdded += (_, args) =>
+        {
+            Debug.WriteLine($"[WindowAdded] Title='{args.Window?.Title}'");
+        };
+
+        factory.WindowRemoved += (_, args) =>
+        {
+            Debug.WriteLine($"[WindowRemoved] Title='{args.Window?.Title}'");
+        };
+
+        factory.WindowMoveDragBegin += (_, args) =>
+        {
+            // NOTE: Set to True to cancel window dragging.
+#if false
+                args.Cancel = true;
+#endif
+            Debug.WriteLine($"[WindowMoveDragBegin] Title='{args.Window?.Title}', Cancel={args.Cancel}, X='{args.Window?.X}', Y='{args.Window?.Y}'");
+        };
+
+        factory.WindowMoveDrag += (_, args) =>
+        {
+            Debug.WriteLine($"[WindowMoveDrag] Title='{args.Window?.Title}', X='{args.Window?.X}', Y='{args.Window?.Y}");
+        };
+
+        factory.WindowMoveDragEnd += (_, args) =>
+        {
+            Debug.WriteLine($"[WindowMoveDragEnd] Title='{args.Window?.Title}', X='{args.Window?.X}', Y='{args.Window?.Y}");
+        };
+
+        factory.WindowActivated += (_, args) =>
+        {
+            Debug.WriteLine($"[WindowActivated] Title='{args.Window?.Title}'");
+        };
+
+        factory.DockableActivated += (_, args) =>
+        {
+            Debug.WriteLine($"[DockableActivated] Title='{args.Dockable?.Title}'");
+        };
+
+        factory.WindowDeactivated += (_, args) =>
+        {
+            Debug.WriteLine($"[WindowDeactivated] Title='{args.Window?.Title}'");
+        };
+
+        factory.DockableDeactivated += (_, args) =>
+        {
+            Debug.WriteLine($"[DockableDeactivated] Title='{args.Dockable?.Title}'");
+        };
     }
 }
