@@ -1,0 +1,180 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:EDHelp.ViewModels.Documents"
+             xmlns:controls="using:EDHelp.Controls"
+             x:Class="EDHelp.Views.Documents.DeckListView"
+             x:DataType="vm:DeckListViewModel">
+
+    <Design.DataContext>
+        <vm:DeckListViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="CardBrush" Color="#3c3c3c"/>
+        <SolidColorBrush x:Key="HoverBrush" Color="#505050"/>
+        <SolidColorBrush x:Key="GroupHeaderBrush" Color="#404040"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Search Box -->
+        <Border Grid.Row="0" Background="#2d2d30" Padding="15">
+            <AutoCompleteBox Width="250" 
+                             x:Name="CardSearchBox"  
+                             FilterMode="None"
+                             Watermark="Search for cards..."
+                             SelectedItem="{Binding SearchCard}"/>
+        </Border>
+
+        <!-- Card List -->
+        <ScrollViewer Grid.Row="1" Padding="15">
+            <ItemsControl ItemsSource="{Binding GroupedCards}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="0,0,0,15">
+                            <!-- Group Header -->
+                            <Border Background="{StaticResource GroupHeaderBrush}" 
+                                    CornerRadius="3"
+                                    Padding="10,8">
+                                <Button Classes="GroupToggle"
+                                        Command="{Binding $parent[UserControl].((vm:DeckListViewModel)DataContext).ToggleGroupCommand}"
+                                        CommandParameter="{Binding}"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        HorizontalAlignment="Stretch">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0"
+                                                   Text="{Binding IsExpanded, Converter={StaticResource BoolToExpanderIcon}}"
+                                                   FontFamily="Segoe MDL2 Assets"
+                                                   FontSize="12"
+                                                   Foreground="White"
+                                                   Margin="0,0,8,0"/>
+
+                                        <TextBlock Grid.Column="1" 
+                                                   Text="{Binding typeName}" 
+                                                   FontSize="14" 
+                                                   FontWeight="SemiBold" 
+                                                   Foreground="White"/>
+
+                                        <TextBlock Grid.Column="2" 
+                                                   Text="{Binding count, StringFormat=({0})}" 
+                                                   FontSize="12" 
+                                                   Foreground="#cccccc"/>
+                                    </Grid>
+                                </Button>
+                            </Border>
+
+                            <!-- Cards in Group -->
+                            <ItemsControl ItemsSource="{Binding cards}" 
+                                          IsVisible="{Binding IsExpanded}"
+                                          Margin="10,5,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{StaticResource CardBrush}"
+                                                Margin="0,0,0,1"
+                                                Padding="12,8"
+                                                CornerRadius="3">
+                                            <Border.Styles>
+                                                <Style Selector="Border:pointerover">
+                                                    <Setter Property="Background" Value="{StaticResource HoverBrush}"/>
+                                                </Style>
+                                            </Border.Styles>
+
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Quantity with +/- buttons -->
+                                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="3" VerticalAlignment="Center">
+                                                    <Button Content="−" 
+                                                            Width="20" Height="20"
+                                                            FontSize="12"
+                                                            Padding="0"
+                                                            Command="{Binding $parent[UserControl].((vm:DeckListViewModel)DataContext).DecreaseQuantityCommand}"
+                                                            CommandParameter="{Binding}"/>
+                                                    
+                                                    <TextBlock Text="{Binding Quantity}" 
+                                                               Foreground="#cccccc" 
+                                                               FontWeight="Bold"
+                                                               Width="20"
+                                                               TextAlignment="Center"
+                                                               VerticalAlignment="Center"/>
+                                                    
+                                                    <Button Content="+" 
+                                                            Width="20" Height="20"
+                                                            FontSize="12"
+                                                            Padding="0"
+                                                            Command="{Binding $parent[UserControl].((vm:DeckListViewModel)DataContext).IncreaseQuantityCommand}"
+                                                            CommandParameter="{Binding}"/>
+                                                </StackPanel>
+
+                                                <!-- Card Name -->
+                                                <Button Grid.Column="1" 
+                                                        Content="{Binding card.name}"
+                                                        Foreground="White"
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        HorizontalAlignment="Left"
+                                                        Margin="15,0,0,0"
+                                                        Command="{Binding $parent[UserControl].((vm:DeckListViewModel)DataContext).ShowCardDetailsCommand}"
+                                                        CommandParameter="{Binding}"/>
+
+                                                <!-- Mana Cost -->
+                                                <controls:ManaCostControl Grid.Column="2" 
+                                                                          ManaCost="{Binding card.manaCost}"
+                                                                          Margin="10,0"/>
+
+                                                <!-- Remove Button -->
+                                                <Button Grid.Column="3"
+                                                        Content="🗑"
+                                                        Width="24" Height="24"
+                                                        FontSize="12"
+                                                        Padding="0"
+                                                        Command="{Binding $parent[UserControl].((vm:DeckListViewModel)DataContext).RemoveCardCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        ToolTip.Tip="Remove card"/>
+                                            </Grid>
+
+                                            <!-- Context Menu -->
+                                            <Border.ContextFlyout>
+                                                <MenuFlyout>
+                                                    <MenuItem Header="Set as Commander"
+                                                              Command="{Binding $parent[UserControl].((vm:DeckListViewModel)DataContext).SetAsCommanderCommand}"
+                                                              CommandParameter="{Binding}"/>
+                                                    <MenuItem Header="Add Copy"
+                                                              Command="{Binding $parent[UserControl].((vm:DeckListViewModel)DataContext).IncreaseQuantityCommand}"
+                                                              CommandParameter="{Binding}"/>
+                                                    <MenuItem Header="Remove Copy"
+                                                              Command="{Binding $parent[UserControl].((vm:DeckListViewModel)DataContext).DecreaseQuantityCommand}"
+                                                              CommandParameter="{Binding}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="Remove Card"
+                                                              Command="{Binding $parent[UserControl].((vm:DeckListViewModel)DataContext).RemoveCardCommand}"
+                                                              CommandParameter="{Binding}"/>
+                                                </MenuFlyout>
+                                            </Border.ContextFlyout>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

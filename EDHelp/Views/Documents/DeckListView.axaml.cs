@@ -1,18 +1,18 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using EDHelp.ViewModels;
+using EDHelp.ViewModels.Documents;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EDHelp.Views;
+namespace EDHelp.Views.Documents;
 
-public partial class DeckBuilderView : UserControl
+public partial class DeckListView : UserControl
 {
-    public DeckBuilderView()
+    public DeckListView()
     {
         InitializeComponent();
-
-        DeckBuilderViewModel vm = App.serviceProvider.GetRequiredService<DeckBuilderViewModel>();
+        
+        DeckListViewModel vm = Program.ServiceProvider.GetRequiredService<DeckListViewModel>();
         
         this.Find<AutoCompleteBox>("CardSearchBox").AsyncPopulator = vm.UpdateSearchList;
     }

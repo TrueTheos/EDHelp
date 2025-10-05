@@ -1,55 +1,57 @@
-<Window x:Class="EDHelp.Views.MainWindow"
-        xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:vm="using:EDHelp.ViewModels"
-        xmlns:views="using:EDHelp.Views"
-        mc:Ignorable="d"
-        d:DesignWidth="1200" d:DesignHeight="680"
-        x:DataType="vm:MainWindowViewModel" x:CompileBindings="True"
-        x:Name="MainWindowView"
-        UseLayoutRounding="True" RenderOptions.BitmapInterpolationMode="HighQuality"
-        WindowState="Normal" WindowStartupLocation="CenterScreen"
-        Background="{x:Null}"
-        TransparencyLevelHint="AcrylicBlur"
-        Foreground="{DynamicResource DockThemeForegroundBrush}"
-        BorderThickness="1" BorderBrush="{DynamicResource DockThemeBorderLowBrush}"
-        FontFamily="Segoe UI, SF Pro Display, Noto Sans, Cantarel"
-        Title="Dock Avalonia Demo" Height="680" Width="1200"
-        ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="PreferSystemChrome">
-    <Window.Resources>
-        <ExperimentalAcrylicMaterial BackgroundSource="Digger"
-                                     TintColor="{DynamicResource SystemAltHighColor}"
-                                     TintOpacity="1"
-                                     FallbackColor="{DynamicResource AcrylicFallbackColor}"
-                                     MaterialOpacity="0.55"
-                                     x:Key="AcrylicMaterial"/>
-    </Window.Resources>
+        xmlns:dock="clr-namespace:Dock.Avalonia.Controls;assembly=Dock.Avalonia"
+        x:Class="EDHelp.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="EDHelp - Deck Builder"
+        Width="1400" Height="900">
+
     <Design.DataContext>
-        <vm:MainWindowViewModel />
+        <vm:MainWindowViewModel/>
     </Design.DataContext>
-    <Panel>
-        <ExperimentalAcrylicBorder IsHitTestVisible="False" Material="{StaticResource AcrylicMaterial}" />
-        <Panel Margin="{Binding #MainWindowView.OffScreenMargin}">
-            <Panel Margin="{Binding #MainWindowView.WindowDecorationMargin}">
-                <views:MainView>
-                    <views:MainView.Styles>
-                        <Style Selector="GridSplitter">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate>
-                                        <Border Background="Transparent">
-                                            <ExperimentalAcrylicBorder Material="{StaticResource AcrylicMaterial}" />
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </views:MainView.Styles>
-                </views:MainView>
-            </Panel>
-        </Panel>
-    </Panel>
+
+    <DockPanel>
+        <!-- Menu Bar -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Import Deck..." Command="{Binding ImportDeckCommand}" CommandParameter="{Binding $self}"/>
+                <Separator/>
+                <MenuItem Header="_Exit"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Main Content -->
+        <Grid>
+            <!-- Dock Layout -->
+            <dock:DockControl Layout="{Binding Layout}" 
+                              IsVisible="{Binding IsDeckLoaded}"/>
+            
+            <!-- Import View (shown when no deck loaded) -->
+            <Border Background="#1e1e1e" 
+                    IsVisible="{Binding !IsDeckLoaded}">
+                <StackPanel VerticalAlignment="Center" 
+                            HorizontalAlignment="Center"
+                            Spacing="20">
+                    <TextBlock Text="📄" 
+                               FontSize="72" 
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Drop a decklist (.txt) file here" 
+                               FontSize="18" 
+                               Foreground="White"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="or" 
+                               FontSize="14" 
+                               Foreground="#888"
+                               HorizontalAlignment="Center"/>
+                    <Button Content="Browse Files..." 
+                            Command="{Binding ImportDeckCommand}"
+                            CommandParameter="{Binding $self}"
+                            HorizontalAlignment="Center"
+                            Padding="20,10"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
 </Window>

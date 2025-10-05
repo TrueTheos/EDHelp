@@ -1,0 +1,69 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:EDHelp.ViewModels.Tools"
+             x:Class="EDHelp.Views.Tools.CombosView"
+             x:DataType="vm:CombosViewModel">
+
+    <Design.DataContext>
+        <vm:CombosViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="CardBrush" Color="#3c3c3c"/>
+        <SolidColorBrush x:Key="HoverBrush" Color="#505050"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Combos"
+                   FontSize="14" 
+                   FontWeight="SemiBold" 
+                   Foreground="White"
+                   Margin="10,10,10,5"/>
+
+        <ScrollViewer Grid.Row="1" Margin="10,0,10,10">
+            <ItemsControl ItemsSource="{Binding Combos}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{StaticResource CardBrush}"
+                                Margin="0,0,0,5"
+                                Padding="10"
+                                CornerRadius="3">
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="{Binding results}" 
+                                           FontWeight="SemiBold"
+                                           Foreground="White"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Loading Indicator -->
+        <ProgressBar Grid.Row="1"
+                     IsIndeterminate="True" 
+                     IsVisible="{Binding IsLoading}" 
+                     VerticalAlignment="Center" 
+                     HorizontalAlignment="Center"
+                     Width="200"/>
+
+        <!-- Empty State -->
+        <Border Grid.Row="1"
+                Background="{StaticResource CardBrush}"
+                CornerRadius="3"
+                Margin="10"
+                IsVisible="{Binding !IsLoading}">
+            <TextBlock Text="No combos found in deck" 
+                       Foreground="#888888" 
+                       FontStyle="Italic"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,139 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:EDHelp.ViewModels.Documents"
+             xmlns:controls="using:EDHelp.Controls"
+             x:Class="EDHelp.Views.Documents.CardPreviewView"
+             x:DataType="vm:CardPreviewViewModel">
+
+    <Design.DataContext>
+        <vm:CardPreviewViewModel/>
+    </Design.DataContext>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Card Image Header -->
+        <Grid Grid.Row="0" Margin="10,10,10,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" 
+                       Text="Card Preview" 
+                       FontSize="14" 
+                       FontWeight="SemiBold" 
+                       Foreground="White"/>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
+                <Button Content="📌" 
+                        Width="24" Height="24"
+                        FontSize="12"
+                        Padding="0"
+                        IsVisible="{Binding SelectedCard, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Command="{Binding PinCardCommand}"
+                        ToolTip.Tip="Pin card"/>
+                <Button Content="✕" 
+                        Width="24" Height="24"
+                        FontSize="12"
+                        Padding="0"
+                        IsVisible="{Binding SelectedCard, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Command="{Binding CloseCardCommand}"
+                        ToolTip.Tip="Close card"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Card Image and Details -->
+        <ScrollViewer Grid.Row="1" Margin="10,0,10,10">
+            <StackPanel>
+                <StackPanel IsVisible="{Binding SelectedCard, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <!-- Card Image -->
+                    <controls:CachedCardImage Card="{Binding SelectedCard}" 
+                                              Width="250" 
+                                              Height="350"
+                                              Stretch="Uniform"
+                                              Margin="0,0,0,10"/>
+
+                    <!-- Card Details -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="{Binding SelectedCard.name}" 
+                                   FontSize="16" 
+                                   FontWeight="Bold" 
+                                   Foreground="White" 
+                                   TextWrapping="Wrap"/>
+
+                        <controls:ManaCostControl ManaCost="{Binding SelectedCard.manaCost}"/>
+
+                        <TextBlock Text="{Binding SelectedCard.type}" 
+                                   FontSize="12" 
+                                   Foreground="#cccccc"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock Text="{Binding SelectedCard.text}" 
+                                   FontSize="11" 
+                                   Foreground="#e0e0e0"
+                                   TextWrapping="Wrap"
+                                   Margin="0,5,0,0"/>
+
+                        <!-- Card Action Buttons -->
+                        <StackPanel Spacing="8" Margin="0,15,0,0">
+                            <Button Content="Add to Deck"
+                                    Background="#4CAF50"
+                                    Foreground="White"
+                                    HorizontalAlignment="Stretch"
+                                    Padding="12,8"
+                                    CornerRadius="4"
+                                    Command="{Binding AddCardToDeckCommand}"
+                                    CommandParameter="{Binding SelectedCard}"
+                                    IsVisible="{Binding SelectedCardInDeck, Converter={x:Static ObjectConverters.IsNull}}"/>
+
+                            <Button Content="Add Another Copy"
+                                    Background="#4CAF50"
+                                    Foreground="White"
+                                    HorizontalAlignment="Stretch"
+                                    Padding="12,8"
+                                    CornerRadius="4"
+                                    Command="{Binding AddCardToDeckCommand}"
+                                    CommandParameter="{Binding SelectedCard}"
+                                    IsVisible="{Binding SelectedCardInDeck, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+
+                            <!-- Remove one copy button -->
+                            <Button Content="Remove One Copy"
+                                    Background="#FF5722"
+                                    Foreground="White"
+                                    HorizontalAlignment="Stretch"
+                                    Padding="12,6"
+                                    CornerRadius="4"
+                                    Command="{Binding RemoveOneCardFromDeckCommand}"
+                                    CommandParameter="{Binding SelectedCard}"
+                                    IsVisible="{Binding SelectedCardInDeck, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+
+                            <!-- Remove all copies button -->
+                            <Button Content="Remove All Copies"
+                                    Background="#D32F2F"
+                                    Foreground="White"
+                                    HorizontalAlignment="Stretch"
+                                    Padding="12,6"
+                                    CornerRadius="4"
+                                    Command="{Binding RemoveAllCopiesFromDeckCommand}"
+                                    CommandParameter="{Binding SelectedCard}"
+                                    IsVisible="{Binding SelectedCardInDeck, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Empty State -->
+                <TextBlock Text="Select a card to view details"
+                           Foreground="#888888"
+                           FontStyle="Italic"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="0,50,0,0"
+                           IsVisible="{Binding SelectedCard, Converter={x:Static ObjectConverters.IsNull}}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -2,11 +2,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace EDHelp.Views.Tools;
+namespace EDHelp.Views.Documents;
 
-public partial class CardInfoToolView : UserControl
+public partial class CardPreviewView : UserControl
 {
-    public CardInfoToolView()
+    public CardPreviewView()
     {
         InitializeComponent();
     }

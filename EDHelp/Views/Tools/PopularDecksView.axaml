@@ -1,0 +1,75 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:EDHelp.ViewModels.Tools"
+             x:Class="EDHelp.Views.Tools.PopularDecksView"
+             x:DataType="vm:PopularDecksViewModel">
+
+    <Design.DataContext>
+        <vm:PopularDecksViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="CardBrush" Color="#3c3c3c"/>
+        <SolidColorBrush x:Key="HoverBrush" Color="#505050"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Popular Decks"
+                   FontSize="14" 
+                   FontWeight="SemiBold" 
+                   Foreground="White"
+                   Margin="10,10,10,5"/>
+
+        <ScrollViewer Grid.Row="1" Margin="10,0,10,10">
+            <ItemsControl ItemsSource="{Binding MoxfieldBestDecks}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{StaticResource CardBrush}"
+                                Margin="0,0,0,2"
+                                Padding="10,8"
+                                CornerRadius="3">
+                            <Border.Styles>
+                                <Style Selector="Border:pointerover">
+                                    <Setter Property="Background" Value="{StaticResource HoverBrush}"/>
+                                </Style>
+                            </Border.Styles>
+                            
+                            <Button Content="{Binding name}" 
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Foreground="White"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Padding="0"
+                                    Command="{Binding $parent[UserControl].((vm:PopularDecksViewModel)DataContext).OpenMoxfieldDeckCommand}"
+                                    CommandParameter="{Binding link}"/>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Loading Indicator -->
+        <ProgressBar Grid.Row="1"
+                     IsIndeterminate="True" 
+                     IsVisible="{Binding IsLoading}" 
+                     VerticalAlignment="Center" 
+                     HorizontalAlignment="Center"
+                     Width="200"/>
+
+        <!-- Empty State -->
+        <TextBlock Grid.Row="1"
+                   Text="Select a commander to see popular decks"
+                   Foreground="#888888"
+                   FontStyle="Italic"
+                   TextAlignment="Center"
+                   VerticalAlignment="Center"
+                   IsVisible="{Binding !IsLoading}"/>
+    </Grid>
+</UserControl>

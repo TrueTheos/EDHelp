@@ -26,6 +26,7 @@
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="Dock.Avalonia" Version="11.3.6.1" />
         <PackageReference Include="Dock.Avalonia.Themes.Fluent" Version="11.3.6.1" />
+        <PackageReference Include="Dock.Model.Extensions.DependencyInjection" Version="11.3.6.1" />
         <PackageReference Include="Dock.Model.Mvvm" Version="11.3.6.1" />
         <PackageReference Include="Dock.Serializer" Version="11.3.0.12" />
         <PackageReference Include="FuzzySharp" Version="2.0.2" />
@@ -36,11 +37,5 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
           <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Views\Tools\CardInfoToolView.cs">
-        <DependentUpon>CardInfoToolView.axaml</DependentUpon>
-      </Compile>
     </ItemGroup>
 </Project>

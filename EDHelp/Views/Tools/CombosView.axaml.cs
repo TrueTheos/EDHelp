@@ -2,11 +2,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace EDHelp.Views;
+namespace EDHelp.Views.Tools;
 
-public partial class DockableOptionsView : UserControl
+public partial class CombosView : UserControl
 {
-    public DockableOptionsView()
+    public CombosView()
     {
         InitializeComponent();
     }

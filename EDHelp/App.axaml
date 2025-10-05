@@ -1,16 +1,43 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="EDHelp.App"
+             xmlns:local="using:EDHelp"
              RequestedThemeVariant="Dark"
              xmlns:converters="clr-namespace:EDHelp.Converters"
+             xmlns:core="using:Dock.Model.Core"
+             xmlns:documentsViews="using:EDHelp.Views.Documents"
+             xmlns:toolsViews="using:EDHelp.Views.Tools"
+             xmlns:toolsViewModels="clr-namespace:EDHelp.ViewModels.Tools"
+             xmlns:documentsViewModels="clr-namespace:EDHelp.ViewModels.Documents"
              xmlns:edHelp="clr-namespace:EDHelp">
 
     <Application.Styles>
         <FluentTheme />
+        <DockFluentTheme />
     </Application.Styles>
     
     <Application.DataTemplates>
-        <edHelp:ViewLocator/>
+        <!-- Document Templates -->
+        <DataTemplate DataType="documentsViewModels:DeckListViewModel">
+            <documentsViews:DeckListView/>
+        </DataTemplate>
+        <DataTemplate DataType="documentsViewModels:CardPreviewViewModel">
+            <documentsViews:CardPreviewView/>
+        </DataTemplate>
+        
+        <!-- Tool Templates -->
+        <DataTemplate DataType="toolsViewModels:PopularDecksViewModel">
+            <toolsViews:PopularDecksView/>
+        </DataTemplate>
+        <DataTemplate DataType="toolsViewModels:CommonCardsViewModel">
+            <toolsViews:CommonCardsView/>
+        </DataTemplate>
+        <DataTemplate DataType="toolsViewModels:ManaCurveViewModel">
+            <toolsViews:ManaCurveView/>
+        </DataTemplate>
+        <DataTemplate DataType="toolsViewModels:CombosViewModel">
+            <toolsViews:CombosView/>
+        </DataTemplate>
     </Application.DataTemplates>
     
     <Application.Resources>
@@ -27,6 +54,10 @@
 
                     <!-- String -->
                     <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmpty" />
+                </ResourceDictionary>
+                
+                <ResourceDictionary>
+                    <ControlRecycling x:Key="ControlRecyclingKey" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

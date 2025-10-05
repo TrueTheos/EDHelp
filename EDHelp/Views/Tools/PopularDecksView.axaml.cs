@@ -2,11 +2,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace EDHelp.Views.Documents;
+namespace EDHelp.Views.Tools;
 
-public partial class DocumentView : UserControl
+public partial class PopularDecksView : UserControl
 {
-    public DocumentView()
+    public PopularDecksView()
     {
         InitializeComponent();
     }

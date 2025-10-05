@@ -6,6 +6,7 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using EDHelp.ViewModels;
+using EDHelp.ViewModels.Tools;
 
 namespace EDHelp.Controls;
 

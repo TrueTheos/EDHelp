@@ -25,7 +25,7 @@ public class CachedCardImage : Image
 
     public CachedCardImage()
     {
-        _cardCacheService = App.serviceProvider?.GetRequiredService<ICardCacheService>();
+        _cardCacheService = Program.ServiceProvider?.GetRequiredService<ICardCacheService>();
         
         PropertyChanged += async (sender, e) =>
         {

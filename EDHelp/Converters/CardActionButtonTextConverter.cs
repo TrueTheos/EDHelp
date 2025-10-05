@@ -9,10 +9,10 @@ public class CardActionButtonTextConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is DeckCard deckCard)
+       /* if (value is DeckCard deckCard)
         {
             return $"Add Another Copy";
-        }
+        }*/ //todo
             
         return "Add to Deck";
     }

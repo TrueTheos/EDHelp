@@ -1,6 +1,5 @@
-﻿namespace EDHelp.Models;
+namespace EDHelp.Models;
 
 public class DemoData
 {
-    
 }
